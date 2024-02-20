@@ -5,6 +5,7 @@ import com.agentdid127.resourcepack.library.PackConverter;
 import com.agentdid127.resourcepack.library.Util;
 import com.agentdid127.resourcepack.library.pack.Pack;
 import com.agentdid127.resourcepack.library.utilities.Logger;
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -114,6 +115,12 @@ public class ModelConverter extends Converter {
                                 String value = entry.getValue().getAsString();
                                 textureObject.remove(entry.getKey());
                                 // 1.13 Mappings
+
+				                if (version >= Util.getVersionProtocol(packConverter.getGson(), "1.9")) {
+				                    if (!value.contains("/")) {
+					                    value = path.getFileName() + "/" + value;
+				                    }
+				                }
                                 if (version >= Util.getVersionProtocol(packConverter.getGson(), "1.13")) {
                                     if (value.startsWith("block/")) {
                                         value = "block/" + nameConverter.getBlockMapping()
@@ -186,17 +193,7 @@ public class ModelConverter extends Converter {
                         // fix display settings for packs from 1.8
                         if (jsonObject.has("display")
                                 && from == Util.getVersionProtocol(packConverter.getGson(), "1.8")) {
-                            JsonObject display = jsonObject.getAsJsonObject("display");
-                            if (display.has("firstperson")) {
-                                display.add("firstperson_righthand", display.get("firstperson"));
-                                display.remove("firstperson");
-
-                            }
-                            if (display.has("thirdperson")) {
-                                display.add("thirdperson_righthand", display.get("thirdperson"));
-                                display.remove("thirdperson");
-                            }
-                            jsonObject.remove("display");
+                            JsonObject display = updateDisplay(packConverter.getGson(), jsonObject.remove("display").getAsJsonObject());
                             jsonObject.add("display", display);
                         }
                         if (jsonObject.has("overrides")) {
@@ -307,5 +304,68 @@ public class ModelConverter extends Converter {
             Logger.log("Prefix Failed on: " + parent);
             return "";
         }
+    }
+
+    protected static JsonObject updateDisplay(Gson gson, JsonObject display) {
+	if (display.has("firstperson")) {
+	    JsonObject firstperson = display.remove("firstperson").getAsJsonObject();
+	    display.add("firstperson_righthand", updateDisplayFirstPerson(gson, firstperson));
+	    
+	}
+	if (display.has("thirdperson")) {
+	    display.add("thirdperson_righthand", display.get("thirdperson"));
+	    display.remove("thirdperson");
+	}
+    return display;
+    }
+
+    private static JsonObject updateDisplayFirstPerson(Gson gson, JsonObject old) {
+
+	JsonArray oldRotation = old.get("rotation").getAsJsonArray();
+        JsonArray oldTranslation = old.get("translation").getAsJsonArray();
+        JsonArray oldScale = old.get("scale").getAsJsonArray();
+
+        JsonObject newObject = new JsonObject();
+        newObject.add("rotation", add(oldRotation, asArray(gson, "[0, 45, 0]")));
+        newObject.add("translation", add(multiply(subtract(oldTranslation, asArray(gson, "[0, 4, 2]")), asArray(gson, "[0.4, 0.4, 0.4]")), asArray(gson, "[1.13, 3.2, 1.13]")));
+        newObject.add("scale", multiply(oldScale, asArray(gson, "[0.4, 0.4, 0.4]")));
+        return newObject;
+    }
+
+
+    private static JsonArray add(JsonArray lhs, JsonArray rhs) {
+	return add(lhs, rhs, (byte)1);
+    }
+    // Math
+    private static JsonArray add(JsonArray lhs, JsonArray rhs, byte sign) {
+        JsonArray newArray = new JsonArray();
+        newArray.add(add(lhs, rhs, 1, sign));
+        newArray.add(add(lhs, rhs, 2, sign));
+        newArray.add(add(lhs, rhs, 3, sign));
+        return newArray;
+    }
+
+    private static float add(JsonArray lhs, JsonArray rhs, int i, byte sign) {
+	return lhs.get(i).getAsFloat() + sign * rhs.get(i).getAsFloat();
+    }
+
+    private static float multiply(JsonArray lhs, JsonArray rhs, int i) {
+	return lhs.get(i).getAsFloat() * rhs.get(i).getAsFloat();
+    }
+
+    private static JsonArray subtract(JsonArray lhs, JsonArray rhs) {
+        return add(lhs, rhs, (byte)-1);
+    }
+
+    private static JsonArray multiply(JsonArray lhs, JsonArray rhs) {
+        JsonArray newArray = new JsonArray();
+        newArray.add(multiply(lhs, rhs, 1));
+        newArray.add(multiply(lhs, rhs, 2));
+        newArray.add(multiply(lhs, rhs, 3));
+        return newArray;
+    }
+
+    private static JsonArray asArray(Gson gson, String raw) {
+        return gson.fromJson(raw, JsonArray.class);
     }
 }
