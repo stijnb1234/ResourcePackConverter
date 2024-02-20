@@ -114,13 +114,15 @@ public class ModelConverter extends Converter {
                             for (Map.Entry<String, JsonElement> entry : initialTextureObject.entrySet()) {
                                 String value = entry.getValue().getAsString();
                                 textureObject.remove(entry.getKey());
+
+                                // 1.8 mappings
+				                if (version >= Util.getVersionProtocol(packConverter.getGson(), "1.9")) {
+                                    if (entry.getKey().equals("layer0")) {
+                                        value = path.getFileName()  + "/" + value;
+                                    }
+				                }
                                 // 1.13 Mappings
 
-				                if (version >= Util.getVersionProtocol(packConverter.getGson(), "1.9")) {
-				                    if (!value.contains("/")) {
-					                    value = path.getFileName() + "/" + value;
-				                    }
-				                }
                                 if (version >= Util.getVersionProtocol(packConverter.getGson(), "1.13")) {
                                     if (value.startsWith("block/")) {
                                         value = "block/" + nameConverter.getBlockMapping()
@@ -320,15 +322,25 @@ public class ModelConverter extends Converter {
     }
 
     private static JsonObject updateDisplayFirstPerson(Gson gson, JsonObject old) {
-
-	JsonArray oldRotation = old.get("rotation").getAsJsonArray();
-        JsonArray oldTranslation = old.get("translation").getAsJsonArray();
-        JsonArray oldScale = old.get("scale").getAsJsonArray();
-
-        JsonObject newObject = new JsonObject();
-        newObject.add("rotation", add(oldRotation, asArray(gson, "[0, 45, 0]")));
-        newObject.add("translation", add(multiply(subtract(oldTranslation, asArray(gson, "[0, 4, 2]")), asArray(gson, "[0.4, 0.4, 0.4]")), asArray(gson, "[1.13, 3.2, 1.13]")));
-        newObject.add("scale", multiply(oldScale, asArray(gson, "[0.4, 0.4, 0.4]")));
+        JsonObject newObject = old.deepCopy();
+        if (old.has("rotation")) {
+            newObject.add("rotation",
+                    add(newObject.remove("rotation").getAsJsonArray(),
+                            asArray(gson, "[0, 45, 0]")));
+        }
+        if (old.has("translation")) {
+            newObject.add("translation",
+                    add(multiply(subtract(
+                            newObject.remove("translation").getAsJsonArray(),
+                            asArray(gson, "[0, 4, 2]")),
+                            asArray(gson, "[0.4, 0.4, 0.4]")),
+                            asArray(gson, "[1.13, 3.2, 1.13]")));
+        }
+        if (old.has("scale")) {
+            newObject.add("scale",
+                    multiply(newObject.remove("scale").getAsJsonArray(),
+                            asArray(gson, "[0.4, 0.4, 0.4]")));
+        }
         return newObject;
     }
 
@@ -339,9 +351,9 @@ public class ModelConverter extends Converter {
     // Math
     private static JsonArray add(JsonArray lhs, JsonArray rhs, byte sign) {
         JsonArray newArray = new JsonArray();
-        newArray.add(add(lhs, rhs, 1, sign));
-        newArray.add(add(lhs, rhs, 2, sign));
-        newArray.add(add(lhs, rhs, 3, sign));
+        for (int i = 0; i < 3; i++) {
+            newArray.add(add(lhs, rhs, i, sign));
+        }
         return newArray;
     }
 
@@ -359,9 +371,9 @@ public class ModelConverter extends Converter {
 
     private static JsonArray multiply(JsonArray lhs, JsonArray rhs) {
         JsonArray newArray = new JsonArray();
-        newArray.add(multiply(lhs, rhs, 1));
-        newArray.add(multiply(lhs, rhs, 2));
-        newArray.add(multiply(lhs, rhs, 3));
+        for (int i = 0; i < 3; i++) {
+            newArray.add(multiply(lhs, rhs, i));
+        }
         return newArray;
     }
 
