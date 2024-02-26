@@ -1,6 +1,4 @@
 # Resource Pack Converter
-[![](https://jitpack.io/v/agentdid127/ResourcePackConverter.svg)](https://jitpack.io/#agentdid127/ResourcePackConverter)
-
 
 This is my fork of Hypixel's Resource Pack Converter. It updates to any newer version from 1.8.x - 1.20.x
 
@@ -11,6 +9,10 @@ This should convert most things, but if it doesn't please let me know what didn'
 Also if any other developers would like to open any PRs with fixes and additions please feel free.
 
 While this program will copy your resource packs before converting them, we still recommend backing them up, just in case!
+
+## 3.0 Development
+This is a branch specifically to develop version 3.0, which will add plugins to the converter, so people can add their own tools.
+Builds for this branch are on my new [Jenkins Server](https://jenkins.dc1.agentdid127.com/job/rpc-3.0/).
 
 ## Usage
 [Download the compiled jar file](https://github.com/agentdid127/ResourcePackConverter/releases/latest), or compile the source yourself.  
@@ -31,16 +33,8 @@ To update to any other version than 1.12-1.13, you can use these parameters.
 
 We hope this helps out!
 
+## Current Feature Plans
 
-
-# To be Added
-Of course there will always be some discrepencies and issues when converting that developers won't always notice, so if you find one, feel free to fix it and send a PR or write an issue here on Github.
-
-Known issues:
-- Particles aren't converting very nicely with larger resource packs.
-
-Things that we want to add/need to be added:
-- Converting to older versions.
-
-# Not On the list to add
-- Horse and Zombified Piglin Conversion (the models were changed, which may make that much more difficult to convert)
+- Plugin System
+- Better Logging
+- General Code Style Guide and Cleanup
