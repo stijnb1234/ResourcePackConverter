@@ -29,12 +29,23 @@ public class MCPatcherConverter extends RPConverter {
      */
     @Override
     public void convert() throws IOException {
-        Path models = pack.getWorkingPath()
-                .resolve("assets" + File.separator + "minecraft" + File.separator + "optifine");
+        Path mc = pack.getWorkingPath()
+            .resolve("assets" + File.separator + "minecraft");
+        if (mc.resolve("mcpatcher").toFile().exists()) {
+            if (PackConverter.DEBUG)
+                Logger.log("MCPatcher exists, switching to optifine");
+            if (mc.resolve("optifine").toFile().exists()) {
+                if (packConverter.DEBUG)
+                    Logger.log("OptiFine exists, merging directories");
+                Util.mergeDirectories(mc.resolve("optifine").toFile(), mc.resolve("mcpatcher").toFile());
+            } else
+                Files.move(mc.resolve("mcpatcher"), mc.resolve("optifine"));
+            if (mc.resolve("mcpatcher").toFile().exists())
+                Util.deleteDirectoryAndContents(mc.resolve("mcpatcher"));
+        }
+        Path models =  mc.resolve("optifine");
         if (models.toFile().exists())
             findFiles(models);
-        // remapModelJson(models.resolve("item"));
-        // remapModelJson(models.resolve("block"));
     }
 
     /**

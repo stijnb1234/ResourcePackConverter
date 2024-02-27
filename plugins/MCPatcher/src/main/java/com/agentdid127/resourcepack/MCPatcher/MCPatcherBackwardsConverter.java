@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class MCPatcherBackwardsConverter extends RPConverter {
+
     public MCPatcherBackwardsConverter(PackConverter packConverter) {
         super(packConverter, "MCPatcherConverter", 1);
     }
@@ -29,8 +30,16 @@ public class MCPatcherBackwardsConverter extends RPConverter {
      */
     @Override
     public void convert() throws IOException {
-        Path models = pack.getWorkingPath()
-                .resolve("assets" + File.separator + "minecraft" + File.separator + "mcpatcher");
+        Path mc = pack.getWorkingPath()
+            .resolve("assets" + File.separator + "minecraft");
+        if (mc.resolve("optifine").toFile().exists()) {
+            if (PackConverter.DEBUG) {
+                Logger.log("OptiFine exists, switching to MCPatcher");
+            }
+            Files.move(mc.resolve("optifine"), mc.resolve("mcpatcher"));
+        }
+
+        Path models = mc.resolve("mcpatcher");
         if (models.toFile().exists())
             findFiles(models);
     }

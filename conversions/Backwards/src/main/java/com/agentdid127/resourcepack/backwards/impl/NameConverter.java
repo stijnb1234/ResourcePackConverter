@@ -46,24 +46,6 @@ public class NameConverter extends RPConverter {
     public void convert() throws IOException {
         Path mc = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft");
 
-        // Version is greater than 1.13
-        if (to <= Util.getVersionProtocol(packConverter.getGson(), "1.13")
-                && from > Util.getVersionProtocol(packConverter.getGson(), "1.13")) {
-            // OptiFine conversion
-            if (mc.resolve("mcpatcher").toFile().exists()) {
-                if (PackConverter.DEBUG)
-                    Logger.log("MCPatcher exists, switching to optifine");
-                if (mc.resolve("optifine").toFile().exists()) {
-                    if (packConverter.DEBUG)
-                        Logger.log("OptiFine exists, merging directories");
-                    Util.mergeDirectories(mc.resolve("optifine").toFile(), mc.resolve("mcpatcher").toFile());
-                } else
-                    Files.move(mc.resolve("mcpatcher"), mc.resolve("optifine"));
-                if (mc.resolve("mcpatcher").toFile().exists())
-                    Util.deleteDirectoryAndContents(mc.resolve("mcpatcher"));
-            }
-        }
-
         Path models = pack.getWorkingPath()
                 .resolve("assets" + File.separator + "minecraft" + File.separator + "models");
         if (models.toFile().exists()) {

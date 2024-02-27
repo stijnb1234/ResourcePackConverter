@@ -56,19 +56,7 @@ public class NameConverter extends RPConverter {
 
         // Version is greater than 1.13
         if (to >= Util.getVersionProtocol(packConverter.getGson(), "1.13")) {
-            // OptiFine conversion
-            if (mc.resolve("mcpatcher").toFile().exists()) {
-                if (PackConverter.DEBUG)
-                    Logger.log("MCPatcher exists, switching to optifine");
-                if (mc.resolve("optifine").toFile().exists()) {
-                    if (packConverter.DEBUG)
-                        Logger.log("OptiFine exists, merging directories");
-                    Util.mergeDirectories(mc.resolve("optifine").toFile(), mc.resolve("mcpatcher").toFile());
-                } else
-                    Files.move(mc.resolve("mcpatcher"), mc.resolve("optifine"));
-                if (mc.resolve("mcpatcher").toFile().exists())
-                    Util.deleteDirectoryAndContents(mc.resolve("mcpatcher"));
-            }
+
 
             // 1.13 Models
             Path models = pack.getWorkingPath()
