@@ -1,8 +1,7 @@
 package com.agentdid127.resourcepack.backwards.impl.textures;
 
-import com.agentdid127.resourcepack.library.Converter;
 import com.agentdid127.resourcepack.library.PackConverter;
-import com.agentdid127.resourcepack.library.pack.Pack;
+import com.agentdid127.resourcepack.library.RPConverter;;
 import com.agentdid127.resourcepack.library.utilities.ImageConverter;
 
 import java.io.File;
@@ -11,23 +10,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-public class PaintingConverter extends Converter {
+public class PaintingConverter extends RPConverter {
     private Path paintingPath;
     private ImageConverter normal;
     ArrayList<String> paintings = new ArrayList<>();
 
     public PaintingConverter(PackConverter packConverter) {
-        super(packConverter);
+        super(packConverter, "PaintingConverter", 1);
     }
 
     /**
      * Remaps painting image to multiple images.
-     * 
-     * @param pack
+     *
      * @throws IOException
      */
     @Override
-    public void convert(Pack pack) throws IOException {
+    public void convert() throws IOException {
         paintingPath = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "textures" + File.separator + "painting" + File.separator);
         if (!paintingPath.toFile().exists()) return;
 

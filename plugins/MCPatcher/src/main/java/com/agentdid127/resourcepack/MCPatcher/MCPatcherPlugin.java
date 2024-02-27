@@ -26,6 +26,11 @@ public class MCPatcherPlugin extends RPPlugin {
           pc.getGson(), "1.13")) {
         getRunners().add(new MCPatcherConverter(pc));
       }
+    } else {
+      if (Util.getVersionProtocol(pc.getGson(), getFrom()) >= Util.getVersionProtocol(pc.getGson(), "1.12.2")
+          && Util.getVersionProtocol(pc.getGson(), getTo()) <= Util.getVersionProtocol(pc.getGson(), "1.13")) {
+          getRunners().add(new MCPatcherBackwardsConverter(pc));
+      }
     }
   }
 

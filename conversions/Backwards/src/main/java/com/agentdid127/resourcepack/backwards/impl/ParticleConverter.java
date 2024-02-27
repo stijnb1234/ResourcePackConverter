@@ -1,22 +1,21 @@
 package com.agentdid127.resourcepack.backwards.impl;
 
-import com.agentdid127.resourcepack.library.Converter;
 import com.agentdid127.resourcepack.library.PackConverter;
-import com.agentdid127.resourcepack.library.pack.Pack;
+import com.agentdid127.resourcepack.library.RPConverter;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class ParticleConverter extends Converter {
+public class ParticleConverter extends RPConverter {
     // Set it up.
     public ParticleConverter(PackConverter packConverter) {
-        super(packConverter);
+        super(packConverter, "ParticleConverter", 1);
     }
 
     @Override
-    public void convert(Pack pack) throws IOException {
+    public void convert() throws IOException {
         // The directory to convert
         Path particles = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "particles");
         if (particles.resolve("block_marker.json").toFile().exists()) {

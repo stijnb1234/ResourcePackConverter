@@ -1,7 +1,7 @@
 package com.agentdid127.resourcepack.backwards.impl;
 
-import com.agentdid127.resourcepack.library.Converter;
 import com.agentdid127.resourcepack.library.PackConverter;
+import com.agentdid127.resourcepack.library.RPConverter;
 import com.agentdid127.resourcepack.library.Util;
 import com.agentdid127.resourcepack.library.pack.Pack;
 import com.google.gson.JsonArray;
@@ -14,18 +14,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class DeleteFileConverter extends Converter {
+public class DeleteFileConverter extends RPConverter {
     int from, to;
     Path models, textures;
 
     public DeleteFileConverter(PackConverter packConverter, int from, int to) {
-        super(packConverter);
+        super(packConverter, "DeleteFileConverter", 1);
         this.from = from;
         this.to = to;
     }
 
     @Override
-    public void convert(Pack pack) throws IOException {
+    public void convert() throws IOException {
         models = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "models");
         textures = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "textures");
 

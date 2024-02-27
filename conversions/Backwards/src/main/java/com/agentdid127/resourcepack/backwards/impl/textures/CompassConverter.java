@@ -1,7 +1,7 @@
 package com.agentdid127.resourcepack.backwards.impl.textures;
 
-import com.agentdid127.resourcepack.library.Converter;
 import com.agentdid127.resourcepack.library.PackConverter;
+import com.agentdid127.resourcepack.library.RPConverter;
 import com.agentdid127.resourcepack.library.Util;
 import com.agentdid127.resourcepack.library.pack.Pack;
 import com.agentdid127.resourcepack.library.utilities.ImageConverter;
@@ -14,18 +14,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 
-public class CompassConverter extends Converter {
+public class CompassConverter extends RPConverter {
     private int from, to;
     private Path items;
 
     public CompassConverter(PackConverter packConverter, int from, int to) {
-        super(packConverter);
+        super(packConverter, "CompassConverter", 1);
         this.from = from;
         this.to = to;
     }
 
     @Override
-    public void convert(Pack pack) throws IOException {
+    public void convert() throws IOException {
         String itemsT = "items";
         if (to > Util.getVersionProtocol(packConverter.getGson(), "1.13"))
             itemsT = "item";

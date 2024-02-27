@@ -1,10 +1,9 @@
 package com.agentdid127.resourcepack.backwards.impl;
 
-import com.agentdid127.resourcepack.library.Converter;
+import com.agentdid127.converter.util.Logger;
 import com.agentdid127.resourcepack.library.PackConverter;
+import com.agentdid127.resourcepack.library.RPConverter;
 import com.agentdid127.resourcepack.library.Util;
-import com.agentdid127.resourcepack.library.pack.Pack;
-import com.agentdid127.resourcepack.library.utilities.Logger;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -18,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class NameConverter extends Converter {
+public class NameConverter extends RPConverter {
     protected int to;
     protected int from;
     protected final Mapping blockMapping = new BlockMapping13();
@@ -33,19 +32,18 @@ public class NameConverter extends Converter {
     protected final Mapping langMapping14 = new LangMapping14();
 
     public NameConverter(PackConverter packConverter, int from, int to) {
-        super(packConverter);
+        super(packConverter, "NameConverter", 0);
         this.from = from;
         this.to = to;
     }
 
     /**
      * Fixes folder names and file names
-     * 
-     * @param pack Resource Pack
+     *
      * @throws IOException Error handler
      */
     @Override
-    public void convert(Pack pack) throws IOException {
+    public void convert() throws IOException {
         Path mc = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft");
 
         // Version is greater than 1.13

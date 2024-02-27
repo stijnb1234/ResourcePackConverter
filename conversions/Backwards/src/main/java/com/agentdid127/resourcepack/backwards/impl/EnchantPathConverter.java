@@ -1,7 +1,7 @@
 package com.agentdid127.resourcepack.backwards.impl;
 
-import com.agentdid127.resourcepack.library.Converter;
 import com.agentdid127.resourcepack.library.PackConverter;
+import com.agentdid127.resourcepack.library.RPConverter;
 import com.agentdid127.resourcepack.library.pack.Pack;
 
 import java.io.File;
@@ -9,13 +9,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class EnchantPathConverter extends Converter {
+public class EnchantPathConverter extends RPConverter {
     public EnchantPathConverter(PackConverter packConverter) {
-        super(packConverter);
+        super(packConverter, "EnchantPathConverter", 1);
     }
 
     @Override
-    public void convert(Pack pack) throws IOException {
+    public void convert() throws IOException {
         Path misc = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "textures" + File.separator + "misc");
 
         if (misc.resolve("enchanted_glint_item.png").toFile().exists())

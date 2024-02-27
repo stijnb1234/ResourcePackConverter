@@ -6,6 +6,7 @@ import com.agentdid127.converter.core.PluginLoader;
 import com.agentdid127.converter.iface.Application;
 import com.agentdid127.converter.iface.IPluginLoader;
 import com.agentdid127.converter.util.Logger;
+import com.agentdid127.resourcepack.backwards.BackwardsPackConverter;
 import com.agentdid127.resourcepack.forwards.ForwardsPackConverter;
 import com.agentdid127.resourcepack.library.PackConverter;
 import com.agentdid127.resourcepack.library.RPConverter;
@@ -64,12 +65,11 @@ public class CommonTool implements Application {
 
         PackConverter packConverter;
         if (Util.getVersionProtocol(gson, from) > Util.getVersionProtocol(gson, to)) {
-            Logger.error("Backwards Pack Conversion is temporarily disabled, as it is being updated to v3.0");
-            return;
-            // new BackwardsPackConverter(from, to, light, minify, optionSet.valueOf(Options.INPUT_DIR), true, out).runDir();
+             packConverter = new BackwardsPackConverter(from, to, light, minify, optionSet.valueOf(Options.INPUT_DIR),
+                 optionSet.valueOf(Options.DEBUG), unstable);
         } else {
             packConverter = new ForwardsPackConverter(from, to, light, minify, optionSet.valueOf(Options.INPUT_DIR),
-                true, unstable);
+                optionSet.valueOf(Options.DEBUG), unstable);
         }
 
         for (RPPlugin value : pluginLoader.getPlugins().values()) {
