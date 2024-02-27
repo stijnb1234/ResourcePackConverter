@@ -14,8 +14,7 @@ import java.nio.file.Path;
 public class ForwardsPackConverter extends PackConverter {
     Path INPUT_DIR;
 
-    public ForwardsPackConverter(String from, String to, String light, boolean minify, Path input, boolean debug,
-            PrintStream out, boolean unstable) {
+    public ForwardsPackConverter(String from, String to, String light, boolean minify, Path input, boolean debug, boolean unstable) {
         GsonBuilder gsonBuilder = new GsonBuilder().disableHtmlEscaping();
         if (!minify)
             gsonBuilder.setPrettyPrinting();
@@ -39,7 +38,7 @@ public class ForwardsPackConverter extends PackConverter {
         if (Util.getVersionProtocol(gson, from) < Util.getVersionProtocol(gson, "1.9")
                 && Util.getVersionProtocol(gson, to) >= Util.getVersionProtocol(gson, "1.9"))
             this.registerConverter(
-                    new CompassConverter(this, Util.getVersionProtocol(gson, from), Util.getVersionProtocol(gson, to)));
+                    new CompassConverter(this, Util.getVersionProtocol(gson, to)));
 
         if (Util.getVersionProtocol(gson, from) < Util.getVersionProtocol(gson, "1.11")
                 && Util.getVersionProtocol(gson, to) >= Util.getVersionProtocol(gson, "1.11"))

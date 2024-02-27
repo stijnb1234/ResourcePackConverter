@@ -11,12 +11,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class CompassConverter extends RPConverter {
-    private int from, to;
+
+    private final int to;
     private Path items;
 
-    public CompassConverter(PackConverter packConverter, int from, int to) {
+    public CompassConverter(PackConverter packConverter, int to) {
         super(packConverter, "CompassConverter", 1);
-        this.from = from;
         this.to = to;
     }
 

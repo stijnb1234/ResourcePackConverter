@@ -69,7 +69,7 @@ public class CommonTool implements Application {
             // new BackwardsPackConverter(from, to, light, minify, optionSet.valueOf(Options.INPUT_DIR), true, out).runDir();
         } else {
             packConverter = new ForwardsPackConverter(from, to, light, minify, optionSet.valueOf(Options.INPUT_DIR),
-                true, out, unstable);
+                true, unstable);
         }
 
         for (RPPlugin value : pluginLoader.getPlugins().values()) {

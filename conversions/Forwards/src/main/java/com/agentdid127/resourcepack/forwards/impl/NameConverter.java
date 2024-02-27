@@ -21,16 +21,16 @@ public class NameConverter extends RPConverter {
 
     protected int to;
     protected int from;
-    protected final Mapping blockMapping = new BlockMapping13();
-    protected final Mapping newBlockMapping = new BlockMapping14();
-    protected final Mapping blockMapping17 = new BlockMapping17();
-    protected final Mapping blockMapping19 = new BlockMapping19();
-    protected final Mapping itemMapping = new ItemMapping13();
-    protected final Mapping newItemMapping = new ItemMapping14();
-    protected final Mapping itemMapping17 = new ItemMapping17();
-    protected final Mapping entityMapping = new EntityMapping();
-    protected final Mapping langMapping = new LangMapping();
-    protected final Mapping langMapping14 = new LangMapping14();
+    protected final Mapping blockMapping = new BlockMapping("1_13");
+    protected final Mapping newBlockMapping = new BlockMapping("1_14");
+    protected final Mapping blockMapping17 = new BlockMapping("1_17");
+    protected final Mapping blockMapping19 = new BlockMapping("1_19");
+    protected final Mapping itemMapping = new ItemMapping("1_13");
+    protected final Mapping newItemMapping = new ItemMapping("1_14");
+    protected final Mapping itemMapping17 = new ItemMapping("1_17");
+    protected final Mapping entityMapping = new EntityMapping("1_13");
+    protected final Mapping langMapping = new LangMapping("1_13");
+    protected final Mapping langMapping14 = new LangMapping("1_14");
 
     public NameConverter(PackConverter packConverter, int from, int to) {
         super(packConverter, "NameConverter", 0);
@@ -212,6 +212,7 @@ public class NameConverter extends RPConverter {
         if (path.toFile().exists()) {
             File directory = new File(path.toString());
             File[] fList = directory.listFiles();
+            assert fList != null;
             for (File file : fList) {
                 if (file.isDirectory()) {
                     renameAll(entityMapping, ".png", Paths.get(file.getPath()));
@@ -307,8 +308,6 @@ public class NameConverter extends RPConverter {
                 String newName = mapping.remap(baseName);
                 if (newName != null && !newName.equals(baseName)) {
                     Boolean ret = Util.renameFile(path1, newName + extension);
-                    if (ret == null)
-                        return;
                     if (ret && packConverter.DEBUG) {
                         Logger.log(
                                 "      Renamed: " + path1.getFileName().toString() + "->" + newName + extension);
@@ -349,22 +348,14 @@ public class NameConverter extends RPConverter {
         return blockMapping19;
     }
 
-    public Mapping getLangMapping() {
-        return langMapping;
-    }
-
-    public Mapping getLangMapping14() {
-        return langMapping14;
-    };
-
     protected abstract static class Mapping {
         protected final Map<String, String> mapping = new HashMap<>();
 
-        public Mapping() {
-            load();
+        public Mapping(String version) {
+            load(version);
         }
 
-        protected abstract void load();
+        protected abstract void load(String version);
 
         /**
          * @return remapped or in if not present
@@ -374,50 +365,16 @@ public class NameConverter extends RPConverter {
         }
     }
 
-    protected class BlockMapping13 extends Mapping {
-        @Override
-        protected void load() {
-            JsonObject blocks = Util.readJsonResource(packConverter.getGson(), "/forwards/blocks.json")
-                    .getAsJsonObject("1_13");
-            if (blocks == null)
-                return;
-            for (Map.Entry<String, JsonElement> entry : blocks.entrySet()) {
-                this.mapping.put(entry.getKey(), entry.getValue().getAsString());
-            }
-        }
-    }
+    protected class BlockMapping extends Mapping {
 
-    protected class BlockMapping14 extends Mapping {
-        @Override
-        protected void load() {
-            JsonObject blocks = Util.readJsonResource(packConverter.getGson(), "/forwards/blocks.json")
-                    .getAsJsonObject("1_14");
-            if (blocks == null)
-                return;
-            for (Map.Entry<String, JsonElement> entry : blocks.entrySet()) {
-                this.mapping.put(entry.getKey(), entry.getValue().getAsString());
-            }
+        public BlockMapping(String version) {
+            super(version);
         }
-    }
 
-    protected class BlockMapping17 extends Mapping {
         @Override
-        protected void load() {
+        protected void load(String version) {
             JsonObject blocks = Util.readJsonResource(packConverter.getGson(), "/forwards/blocks.json")
-                    .getAsJsonObject("1_17");
-            if (blocks == null)
-                return;
-            for (Map.Entry<String, JsonElement> entry : blocks.entrySet()) {
-                this.mapping.put(entry.getKey(), entry.getValue().getAsString());
-            }
-        }
-    }
-
-    protected class BlockMapping19 extends Mapping {
-        @Override
-        protected void load() {
-            JsonObject blocks = Util.readJsonResource(packConverter.getGson(), "/forwards/blocks.json")
-                    .getAsJsonObject("1_19");
+                    .getAsJsonObject(version);
             if (blocks == null)
                 return;
             for (Map.Entry<String, JsonElement> entry : blocks.entrySet()) {
@@ -427,23 +384,15 @@ public class NameConverter extends RPConverter {
     }
 
     protected class LangMapping extends Mapping {
-        @Override
-        protected void load() {
-            JsonObject entities = Util.readJsonResource(packConverter.getGson(), "/forwards/lang.json")
-                    .getAsJsonObject("1_13");
-            if (entities == null)
-                return;
-            for (Map.Entry<String, JsonElement> entry : entities.entrySet()) {
-                this.mapping.put(entry.getKey(), entry.getValue().getAsString());
-            }
-        }
-    }
 
-    protected class LangMapping14 extends Mapping {
+        public LangMapping(String version) {
+            super(version);
+        }
+
         @Override
-        protected void load() {
+        protected void load(String version) {
             JsonObject entities = Util.readJsonResource(packConverter.getGson(), "/forwards/lang.json")
-                    .getAsJsonObject("1_14");
+                    .getAsJsonObject(version);
             if (entities == null)
                 return;
             for (Map.Entry<String, JsonElement> entry : entities.entrySet()) {
@@ -453,8 +402,13 @@ public class NameConverter extends RPConverter {
     }
 
     protected class EntityMapping extends Mapping {
+
+        public EntityMapping(String version) {
+            super(version);
+        }
+
         @Override
-        protected void load() {
+        protected void load(String version) {
             JsonObject entities = Util.readJsonResource(packConverter.getGson(), "/forwards/entities.json");
             if (entities == null)
                 return;
@@ -464,11 +418,16 @@ public class NameConverter extends RPConverter {
         }
     }
 
-    protected class ItemMapping13 extends Mapping {
+    protected class ItemMapping extends Mapping {
+
+        public ItemMapping(String version) {
+            super(version);
+        }
+
         @Override
-        protected void load() {
+        protected void load(String version) {
             JsonObject items = Util.readJsonResource(packConverter.getGson(), "/forwards/items.json")
-                    .getAsJsonObject("1_13");
+                    .getAsJsonObject(version);
             if (items == null)
                 return;
             for (Map.Entry<String, JsonElement> entry : items.entrySet()) {
@@ -477,30 +436,5 @@ public class NameConverter extends RPConverter {
         }
     }
 
-    protected class ItemMapping14 extends Mapping {
-        @Override
-        protected void load() {
-            JsonObject items = Util.readJsonResource(packConverter.getGson(), "/forwards/items.json")
-                    .getAsJsonObject("1_14");
-            if (items == null)
-                return;
-            for (Map.Entry<String, JsonElement> entry : items.entrySet()) {
-                this.mapping.put(entry.getKey(), entry.getValue().getAsString());
-            }
-        }
-    }
-
-    protected class ItemMapping17 extends Mapping {
-        @Override
-        protected void load() {
-            JsonObject items = Util.readJsonResource(packConverter.getGson(), "/forwards/items.json")
-                    .getAsJsonObject("1_17");
-            if (items == null)
-                return;
-            for (Map.Entry<String, JsonElement> entry : items.entrySet()) {
-                this.mapping.put(entry.getKey(), entry.getValue().getAsString());
-            }
-        }
-    }
 
 }
