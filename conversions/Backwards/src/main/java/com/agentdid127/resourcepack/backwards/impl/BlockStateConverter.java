@@ -47,11 +47,20 @@ public class BlockStateConverter extends RPConverter {
 
                         // process multipart
                         JsonArray multipartArray = json.getAsJsonArray("multipart");
+
+
                         if (multipartArray != null) {
-                            for (int i = 0; i < multipartArray.size(); i++) {
-                                JsonObject multipartObject = multipartArray.get(i).getAsJsonObject();
-                                for (Map.Entry<String, JsonElement> entry : multipartObject.entrySet())
-                                    updateModelPath(entry);
+                            if (to < Util.getVersionProtocol(packConverter.getGson(), "1.9")) {
+                                // TODO: Convert Multipart to variants
+                                Files.delete(file);
+                                return;
+                            } else {
+                                for (int i = 0; i < multipartArray.size(); i++) {
+                                    JsonObject multipartObject = multipartArray.get(i)
+                                        .getAsJsonObject();
+                                    for (Map.Entry<String, JsonElement> entry : multipartObject.entrySet())
+                                        updateModelPath(entry);
+                                }
                             }
                         }
 
@@ -61,6 +70,12 @@ public class BlockStateConverter extends RPConverter {
                             // change "normal" key to ""
                             if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.13")
                                     && to < Util.getVersionProtocol(packConverter.getGson(), "1.13")) {
+
+                                if (!variantsObject.has("")) {
+                                    // TODO: find a better way to deal with this.
+                                    Files.delete(file);
+                                    return;
+                                }
                                 JsonElement normal = variantsObject.get("");
                                 if (normal instanceof JsonObject || normal instanceof JsonArray) {
                                     variantsObject.add("normal", normal);
@@ -127,7 +142,7 @@ public class BlockStateConverter extends RPConverter {
                 if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.13")
                         && to < Util.getVersionProtocol(packConverter.getGson(), "1.13")) {
                     val = nameConverter.getBlockMapping().remap(val);
-                    prefix = prefix.replaceAll("block", "blocks");
+                    prefix = "";
                     anyChanges = true;
                 }
 
@@ -171,7 +186,7 @@ public class BlockStateConverter extends RPConverter {
                         if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.13")
                                 && to < Util.getVersionProtocol(packConverter.getGson(), "1.13")) {
                             val = nameConverter.getBlockMapping().remap(val);
-                            prefix = prefix.replaceAll("block", "blocks");
+                            prefix = "";
                             anyChanges = true;
                         }
 
