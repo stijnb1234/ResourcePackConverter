@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class PropertiesEx extends Properties {
-    private static final char[] hexDigit = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+    private static final char[] hexDigit = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
     private String saveConvert(String theString, boolean escapeSpace, boolean escapeUnicode) {
         int len = theString.length();
@@ -62,10 +62,10 @@ public class PropertiesEx extends Properties {
                 if ((aChar < ' ' || aChar > '~') & escapeUnicode) {
                     outBuffer.append('\\');
                     outBuffer.append('u');
-                    outBuffer.append(toHex(aChar >> 12 & 15));
-                    outBuffer.append(toHex(aChar >> 8 & 15));
-                    outBuffer.append(toHex(aChar >> 4 & 15));
-                    outBuffer.append(toHex(aChar & 15));
+                    outBuffer.append(PropertiesEx.toHex(aChar >> 12 & 15));
+                    outBuffer.append(PropertiesEx.toHex(aChar >> 8 & 15));
+                    outBuffer.append(PropertiesEx.toHex(aChar >> 4 & 15));
+                    outBuffer.append(PropertiesEx.toHex(aChar & 15));
                 } else 
                     outBuffer.append(aChar);
             }
@@ -80,17 +80,17 @@ public class PropertiesEx extends Properties {
         int current = 0;
         int last = 0;
 
-        for (char[] uu = new char[]{'\\', 'u', '\u0000', '\u0000', '\u0000', '\u0000'}; current < len; ++current) {
+        for (char[] uu = {'\\', 'u', '\u0000', '\u0000', '\u0000', '\u0000'}; current < len; ++current) {
             char c = comments.charAt(current);
             if (c > 255 || c == '\n' || c == '\r') {
                 if (last != current) 
                     bw.write(comments.substring(last, current));
 
                 if (c > 255) {
-                    uu[2] = toHex(c >> 12 & 15);
-                    uu[3] = toHex(c >> 8 & 15);
-                    uu[4] = toHex(c >> 4 & 15);
-                    uu[5] = toHex(c & 15);
+                    uu[2] = PropertiesEx.toHex(c >> 12 & 15);
+                    uu[3] = PropertiesEx.toHex(c >> 8 & 15);
+                    uu[4] = PropertiesEx.toHex(c >> 4 & 15);
+                    uu[5] = PropertiesEx.toHex(c & 15);
                     bw.write(new String(uu));
                 } else {
                     bw.newLine();
@@ -111,17 +111,17 @@ public class PropertiesEx extends Properties {
     }
 
     public void store(OutputStream out, String comments) throws IOException {
-        this.store1(new BufferedWriter(new OutputStreamWriter(out, "8859_1")), comments, true);
+        store1(new BufferedWriter(new OutputStreamWriter(out, "8859_1")), comments, true);
     }
 
     private void store1(BufferedWriter bw, String comments, boolean escUnicode) throws IOException {
-        if (comments != null) 
-            writeComments(bw, comments);
+        if (comments != null)
+          PropertiesEx.writeComments(bw, comments);
 
-        bw.write("#" + (new Date()).toString());
+        bw.write("#" + (new Date()));
         bw.newLine();
         synchronized (this) {
-            Iterator var5 = this.entrySet().iterator();
+            Iterator var5 = entrySet().iterator();
 
             while (true) {
                 if (!var5.hasNext()) 
@@ -142,6 +142,6 @@ public class PropertiesEx extends Properties {
     }
 
     private static char toHex(int nibble) {
-        return hexDigit[nibble & 15];
+        return PropertiesEx.hexDigit[nibble & 15];
     }
 }

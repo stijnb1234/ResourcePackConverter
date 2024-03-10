@@ -13,6 +13,7 @@ import com.google.gson.JsonPrimitive;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -30,12 +31,12 @@ public class SoundsConverter extends RPConverter {
      */
     @Override
     public void convert() throws IOException {
-        Path soundsJsonPath = pack.getWorkingPath()
+        Path soundsJsonPath = this.pack.getWorkingPath()
                 .resolve("assets" + File.separator + "minecraft" + File.separator + "sounds.json");
         if (!soundsJsonPath.toFile().exists())
             return;
 
-        JsonObject sounds = Util.readJson(packConverter.getGson(), soundsJsonPath);
+        JsonObject sounds = Util.readJson(this.packConverter.getGson(), soundsJsonPath);
         JsonObject newSoundsObject = new JsonObject();
 
         for (Map.Entry<String, JsonElement> entry : sounds.entrySet()) {
@@ -56,14 +57,14 @@ public class SoundsConverter extends RPConverter {
                             throw new IllegalArgumentException(
                                     "Unknown element type: " + jsonElement.getClass().getSimpleName());
 
-                        Path baseSoundsPath = pack.getWorkingPath()
+                        Path baseSoundsPath = this.pack.getWorkingPath()
                                 .resolve("assets" + File.separator + "minecraft" + File.separator + "sounds");
                         Path path = baseSoundsPath.resolve(sound + ".ogg");
                         if (!Util.fileExistsCorrectCasing(path)) {
                             String rewrite = path.toFile().getCanonicalPath().substring(
                                     baseSoundsPath.toString().length() + 1,
                                     path.toFile().getCanonicalPath().length() - 4);
-                            if (packConverter.DEBUG)
+                            if (PackConverter.DEBUG)
                                 Logger.log("      Rewriting Sound: '" + sound + "' -> '" + rewrite + "'");
                             sound = rewrite;
                         } else {
@@ -89,7 +90,8 @@ public class SoundsConverter extends RPConverter {
             }
         }
 
-        Files.write(soundsJsonPath, Collections.singleton(packConverter.getGson().toJson(newSoundsObject)),
-                Charset.forName("UTF-8"));
+        Files.write(soundsJsonPath, Collections.singleton(
+                this.packConverter.getGson().toJson(newSoundsObject)),
+            StandardCharsets.UTF_8);
     }
 }

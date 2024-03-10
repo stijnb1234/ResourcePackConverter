@@ -10,6 +10,7 @@ import com.google.gson.JsonObject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -21,9 +22,9 @@ public class AnimationConverter extends RPConverter {
 
     @Override
     public void convert() throws IOException {
-        fixAnimations(pack.getWorkingPath().resolve(
+        this.fixAnimations(this.pack.getWorkingPath().resolve(
                 "assets" + File.separator + "minecraft" + File.separator + "textures" + File.separator + "block"));
-        fixAnimations(pack.getWorkingPath().resolve(
+        this.fixAnimations(this.pack.getWorkingPath().resolve(
                 "assets" + File.separator + "minecraft" + File.separator + "textures" + File.separator + "item"));
     }
 
@@ -40,7 +41,7 @@ public class AnimationConverter extends RPConverter {
                 .filter(file -> file.toString().endsWith(".png.mcmeta"))
                 .forEach(file -> {
                     try {
-                        JsonObject json = Util.readJson(packConverter.getGson(), file);
+                        JsonObject json = Util.readJson(this.packConverter.getGson(), file);
 
                         boolean anyChanges = false;
                         JsonElement animationElement = json.get("animation");
@@ -55,8 +56,9 @@ public class AnimationConverter extends RPConverter {
                         }
 
                         if (anyChanges) {
-                            Files.write(file, Collections.singleton(packConverter.getGson().toJson(json)),
-                                    Charset.forName("UTF-8"));
+                            Files.write(file, Collections.singleton(
+                                    this.packConverter.getGson().toJson(json)),
+                                StandardCharsets.UTF_8);
                             if (PackConverter.DEBUG)
                                 Logger.log("      Converted " + file.getFileName());
                         }

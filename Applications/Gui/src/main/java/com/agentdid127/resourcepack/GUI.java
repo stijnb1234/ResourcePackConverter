@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -21,6 +22,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Main GUI for the Resource Pack Converter
+ */
 public class GUI extends Application {
 
   Stage stage;
@@ -34,6 +38,8 @@ public class GUI extends Application {
   Label endVersionLabel;
   ComboBox<String> endVersion;
 
+  CheckBox minifyBox;
+
   Button startButton;
 
   TextArea mainOutput;
@@ -42,84 +48,108 @@ public class GUI extends Application {
 
   private String[] supportedVersions;
 
-  private Gson gson;
+  private final Gson gson;
 
   private PrintStream out;
 
+  /**
+   * Constructs a new GUI
+   */
   public GUI() {
 
-    gson = new GsonBuilder().disableHtmlEscaping().create();
-    root = new VBox();
+    this.gson = new GsonBuilder().disableHtmlEscaping().create();
+    this.root = new VBox();
 
-    header = new HBox();
+    this.header = new HBox();
 
-    startVersionLabel = new Label("Start Version");
-    startVersion = new ComboBox<>();
+    this.startVersionLabel = new Label("Start Version");
+    this.startVersion = new ComboBox<>();
 
-    endVersionLabel = new Label("End Version");
-    endVersion = new ComboBox<>();
+    this.endVersionLabel = new Label("End Version");
+    this.endVersion = new ComboBox<>();
 
-    startButton = new Button("Convert!");
+    this.minifyBox = new CheckBox("Minify");
+    this.startButton = new Button("Convert!");
 
-    mainOutput = new TextArea(outputString);
-    mainOutput.setEditable(false);
+    this.mainOutput = new TextArea(this.outputString);
+    this.mainOutput.setEditable(false);
 
-  }
+  } // GUI
 
+  /**
+   * Initializes the GUI.
+   */
   @Override
   public void init() {
 
-    setupVersions();
-    ObservableList<String> versions = FXCollections.<String>observableArrayList();
+    this.setupVersions();
+    ObservableList<String> versions = FXCollections.observableArrayList();
 
-    for (String s : supportedVersions) {
+    for (String s : this.supportedVersions) {
       versions.add(s);
-    }
+    } // for
 
-    startVersion.setItems(versions);
-    endVersion.setItems(versions);
+    this.startVersion.setItems(versions);
+    this.endVersion.setItems(versions);
 
-    startVersion.setValue(supportedVersions[0]);
-    endVersion.setValue(supportedVersions[supportedVersions.length - 1]);
+    this.startVersion.setValue(this.supportedVersions[0]);
+    this.endVersion.setValue(this.supportedVersions[this.supportedVersions.length - 1]);
 
-    startButton.setOnAction((e) -> run());
+    this.minifyBox.setSelected(false);
 
-    header.getChildren().addAll(startVersionLabel, startVersion, endVersionLabel, endVersion, startButton);
-    root.getChildren().addAll(header, mainOutput);
-  }
+    this.startButton.setOnAction((e) -> this.run());
+
+    this.header.getChildren().addAll(this.startVersionLabel, this.startVersion, this.endVersionLabel, this.endVersion,
+        this.minifyBox,
+        this.startButton);
+    this.root.getChildren().addAll(this.header, this.mainOutput);
+  } // init
+
+  /**
+   * Starts up the GUI.
+   *
+   * @param stage Main stage.
+   */
   @Override
-  public void start(Stage stage) throws Exception {
+  public void start(Stage stage) {
 
     this.stage = stage;
-    this.scene = new Scene(root);
+    scene = new Scene(this.root);
 
     stage.setTitle("Resource Pack Converter");
-    stage.setScene(scene);
+    stage.setScene(this.scene);
     stage.setOnCloseRequest(event -> Platform.exit());
     stage.sizeToScene();
     stage.setResizable(true);
     stage.show();
-  }
+  } // start
 
+  /**
+   * Sets up the supported versions.
+   */
   private void setupVersions() {
-    supportedVersions = Util.getSupportedVersions(gson);
-  }
+    this.supportedVersions = Util.getSupportedVersions(this.gson);
+  } // setupVersions
 
+  /**
+   * Runs the converter.
+   */
   private void run() {
-    outputString = "";
-    mainOutput.setText(outputString);
-    out = redirectSystemStreams();
+    this.outputString = "";
+    this.mainOutput.setText(this.outputString);
+    this.out = this.redirectSystemStreams();
 
-    String from = startVersion.getValue();
-    String to = endVersion.getValue();
+    String from = this.startVersion.getValue();
+    String to = this.endVersion.getValue();
 
-    String args = "--from " + from + " --to " + to;
+    String minify = this.minifyBox.isSelected() ? " --minify" : "";
+    String args = "--from " + from + " --to " + to + minify;
     Thread t = new Thread(() -> {
       try {
-        GUIRunner.run(args.split(" "), out);
+        GUIRunner.run(args.split(" "), this.out, this.out);
       } catch (IOException e) {
-        alertError(e);
-      }
+        this.alertError(e);
+      } // try
     });
     t.start();
 
@@ -128,34 +158,42 @@ public class GUI extends Application {
         Thread.sleep(1);
       } catch (InterruptedException e) {
         e.printStackTrace();
-      }
-    }
+      } // try
+    } // while
 
-  }
+  } // run
 
+  /**
+   * Takes an OutputStream and does specific opterations to allow it to appear in a GUI.
+   * @return a PrintStream to output to.
+   */
   private PrintStream redirectSystemStreams() {
     OutputStream out2 = new OutputStream() {
       @Override
       public void write(int b) throws IOException {
-        outputString += (String.valueOf((char) b));
-        mainOutput.setText(outputString);
+        GUI.this.outputString += (String.valueOf((char) b));
+        GUI.this.mainOutput.setText(GUI.this.outputString);
       }
 
       @Override
       public void write(byte[] b, int off, int len) throws IOException {
-        outputString += (new String(b, off, len));
-        mainOutput.setText(outputString);
+        GUI.this.outputString += (new String(b, off, len));
+        GUI.this.mainOutput.setText(GUI.this.outputString);
       }
 
       @Override
       public void write(byte[] b) throws IOException {
-        write(b, 0, b.length);
+        this.write(b, 0, b.length);
       }
     };
 
     return new PrintStream(out2);
-  }
+  } // redirectSystemStreams
 
+  /**
+   * Displays an error box when an error may occur.
+   * @param t The error that happens.
+   */
   private void alertError(Throwable t) {
     Platform.runLater(() -> {
       TextArea errorText = new TextArea(t.getMessage());
@@ -165,6 +203,6 @@ public class GUI extends Application {
       alert.setResizable(true);
       alert.showAndWait();
     });
-    t.printStackTrace(out);
-  }
-}
+    t.printStackTrace(this.out);
+  } // alertError
+} // GUI

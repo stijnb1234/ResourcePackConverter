@@ -18,25 +18,26 @@ public class MCPatcherPlugin extends RPPlugin {
 
   @Override
   public void onInit() {
-    PackConverter pc = getPackConverter();
-    if (Util.getVersionProtocol(pc.getGson(), getFrom()) <= Util.getVersionProtocol(pc.getGson(), getTo())) {
-      if (Util.getVersionProtocol(pc.getGson(), getFrom()) <= Util.getVersionProtocol(pc.getGson(),
+    PackConverter pc = this.getPackConverter();
+    if (Util.getVersionProtocol(pc.getGson(), this.getFrom()) <= Util.getVersionProtocol(pc.getGson(),
+        this.getTo())) {
+      if (Util.getVersionProtocol(pc.getGson(), this.getFrom()) <= Util.getVersionProtocol(pc.getGson(),
           "1.12.2")
-          && Util.getVersionProtocol(pc.getGson(), getTo()) >= Util.getVersionProtocol(
+          && Util.getVersionProtocol(pc.getGson(), this.getTo()) >= Util.getVersionProtocol(
           pc.getGson(), "1.13")) {
-        getRunners().add(new MCPatcherConverter(pc));
+        this.getRunners().add(new MCPatcherConverter(pc));
       }
     } else {
-      if (Util.getVersionProtocol(pc.getGson(), getFrom()) >= Util.getVersionProtocol(pc.getGson(), "1.12.2")
-          && Util.getVersionProtocol(pc.getGson(), getTo()) <= Util.getVersionProtocol(pc.getGson(), "1.13")) {
-          getRunners().add(new MCPatcherBackwardsConverter(pc));
+      if (Util.getVersionProtocol(pc.getGson(), this.getFrom()) >= Util.getVersionProtocol(pc.getGson(), "1.12.2")
+          && Util.getVersionProtocol(pc.getGson(), this.getTo()) <= Util.getVersionProtocol(pc.getGson(), "1.13")) {
+        this.getRunners().add(new MCPatcherBackwardsConverter(pc));
       }
     }
   }
 
   @Override
   public void onUnload() {
-    getRunners().clear();
+    this.getRunners().clear();
     Logger.log("MCPatcher Plugin Unloaded.");
   }
 }

@@ -15,13 +15,13 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class LangConverter extends RPConverter {
-    private String version;
-    private String from;
+    private final String version;
+    private final String from;
 
     public LangConverter(PackConverter packConverter, String fromIn, String versionIn) {
         super(packConverter, "LangConverter", 1);
-        version = versionIn;
-        from = fromIn;
+        this.version = versionIn;
+        this.from = fromIn;
     }
 
     /**
@@ -31,7 +31,7 @@ public class LangConverter extends RPConverter {
      */
     @Override
     public void convert() throws IOException {
-        Path path = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "lang");
+        Path path = this.pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "lang");
         if (!path.toFile().exists())
             return;
         ArrayList<String> models = new ArrayList<String>();
@@ -40,15 +40,16 @@ public class LangConverter extends RPConverter {
                 .forEach(model -> {
                     PropertiesEx out = new PropertiesEx();
                     try (InputStream input = new FileInputStream(model.toString())) {
-                        JsonObject object = Util.readJson(packConverter.getGson(), model, JsonObject.class);
+                        JsonObject object = Util.readJson(this.packConverter.getGson(), model, JsonObject.class);
 
-                        if (Util.getVersionProtocol(packConverter.getGson(), from) > Util
-                                .getVersionProtocol(packConverter.getGson(), "1.12")
-                                && ((Util.getVersionProtocol(packConverter.getGson(), version) < Util
-                                        .getVersionProtocol(packConverter.getGson(), "1.13"))
-                                        && (Util.getVersionProtocol(packConverter.getGson(), version) > Util
-                                                .getVersionProtocol(packConverter.getGson(), "1.13.2")))) {
-                            JsonObject id = Util.readJsonResource(packConverter.getGson(), "/backwards/lang.json")
+                        if (Util.getVersionProtocol(this.packConverter.getGson(), this.from) > Util
+                                .getVersionProtocol(this.packConverter.getGson(), "1.12")
+                                && ((Util.getVersionProtocol(this.packConverter.getGson(), this.version) < Util
+                                        .getVersionProtocol(this.packConverter.getGson(), "1.13"))
+                                        && (Util.getVersionProtocol(this.packConverter.getGson(),
+                            this.version) > Util
+                                                .getVersionProtocol(this.packConverter.getGson(), "1.13.2")))) {
+                            JsonObject id = Util.readJsonResource(this.packConverter.getGson(), "/backwards/lang.json")
                                     .getAsJsonObject("1_13");
                             object.keySet().forEach(key -> {
                                 String value = object.get(key).getAsString();
@@ -60,9 +61,9 @@ public class LangConverter extends RPConverter {
                             });
                         }
 
-                        if (Util.getVersionProtocol(packConverter.getGson(), version) <= Util
-                                .getVersionProtocol(packConverter.getGson(), "1.14")) {
-                            JsonObject id = Util.readJsonResource(packConverter.getGson(), "/backwards/lang.json")
+                        if (Util.getVersionProtocol(this.packConverter.getGson(), this.version) <= Util
+                                .getVersionProtocol(this.packConverter.getGson(), "1.14")) {
+                            JsonObject id = Util.readJsonResource(this.packConverter.getGson(), "/backwards/lang.json")
                                     .getAsJsonObject("1_14");
                             object.keySet().forEach(key -> {
                                 String value = object.get(key).getAsString();
@@ -85,7 +86,7 @@ public class LangConverter extends RPConverter {
                         Logger.log("Saving: " + file2 + ".lang");
                         out.store(
                                 new FileOutputStream(
-                                        pack.getWorkingPath().resolve("assets" + File.separator + "minecraft"
+                                    this.pack.getWorkingPath().resolve("assets" + File.separator + "minecraft"
                                                 + File.separator + "lang" + File.separator + file2 + ".lang").toFile()),
                                 "");
                     } catch (IOException e) {
@@ -95,9 +96,10 @@ public class LangConverter extends RPConverter {
                     models.add(model.getFileName().toString());
                 });
         for (int i = 0; i < models.size(); i++) {
-            Logger.log("Deleting: " + pack.getWorkingPath().resolve("assets" + File.separator + "minecraft"
+            Logger.log("Deleting: " + this.pack.getWorkingPath().resolve("assets" + File.separator + "minecraft"
                     + File.separator + "lang" + File.separator + models.get(i)));
-            Files.delete(pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "lang"
+            Files.delete(
+                this.pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "lang"
                     + File.separator + models.get(i)));
         }
     }

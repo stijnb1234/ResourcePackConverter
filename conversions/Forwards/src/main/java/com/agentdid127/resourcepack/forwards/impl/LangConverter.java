@@ -10,6 +10,7 @@ import com.google.gson.JsonObject;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -18,13 +19,13 @@ import java.util.Enumeration;
 import java.util.Map;
 
 public class LangConverter extends RPConverter {
-    private String version;
-    private String from;
+    private final String version;
+    private final String from;
 
     public LangConverter(PackConverter packConverter, String fromIn, String versionIn) {
         super(packConverter, "LangConverter", 1);
-        version = versionIn;
-        from = fromIn;
+        this.version = versionIn;
+        this.from = fromIn;
     }
 
     /**
@@ -34,7 +35,7 @@ public class LangConverter extends RPConverter {
      */
     @Override
     public void convert() throws IOException {
-        Path path = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "lang");
+        Path path = this.pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "lang");
         if (!path.toFile().exists())
             return;
         ArrayList<String> models = new ArrayList<String>();
@@ -46,13 +47,14 @@ public class LangConverter extends RPConverter {
                     try (InputStream input = new FileInputStream(model.toString())) {
                         PropertiesEx prop = new PropertiesEx();
                         prop.load(input);
-                        if (Util.getVersionProtocol(packConverter.getGson(), from) <= Util
-                                .getVersionProtocol(packConverter.getGson(), "1.12")
-                                && ((Util.getVersionProtocol(packConverter.getGson(), version) >= Util
-                                        .getVersionProtocol(packConverter.getGson(), "1.13"))
-                                        && (Util.getVersionProtocol(packConverter.getGson(), version) <= Util
-                                                .getVersionProtocol(packConverter.getGson(), "1.13.2")))) {
-                            JsonObject id = Util.readJsonResource(packConverter.getGson(), "/forwards/lang.json")
+                        if (Util.getVersionProtocol(this.packConverter.getGson(), this.from) <= Util
+                                .getVersionProtocol(this.packConverter.getGson(), "1.12")
+                                && ((Util.getVersionProtocol(this.packConverter.getGson(), this.version) >= Util
+                                        .getVersionProtocol(this.packConverter.getGson(), "1.13"))
+                                        && (Util.getVersionProtocol(this.packConverter.getGson(),
+                            this.version) <= Util
+                                                .getVersionProtocol(this.packConverter.getGson(), "1.13.2")))) {
+                            JsonObject id = Util.readJsonResource(this.packConverter.getGson(), "/forwards/lang.json")
                                     .getAsJsonObject("1_13");
 
                             Enumeration<String> enums = (Enumeration<String>) prop.propertyNames();
@@ -68,9 +70,9 @@ public class LangConverter extends RPConverter {
                             }
                             // Saves File
                         }
-                        if (Util.getVersionProtocol(packConverter.getGson(), version) > Util
-                                .getVersionProtocol(packConverter.getGson(), "1.14")) {
-                            JsonObject id = Util.readJsonResource(packConverter.getGson(), "/forwards/lang.json")
+                        if (Util.getVersionProtocol(this.packConverter.getGson(), this.version) > Util
+                                .getVersionProtocol(this.packConverter.getGson(), "1.14")) {
+                            JsonObject id = Util.readJsonResource(this.packConverter.getGson(), "/forwards/lang.json")
                                     .getAsJsonObject("1_14");
 
                             Enumeration<String> enums = (Enumeration<String>) prop.propertyNames();
@@ -98,10 +100,11 @@ public class LangConverter extends RPConverter {
                         String file2 = model.getFileName().toString().substring(0, modelNoLang);
                         Logger.log("Saving: " + file2 + ".json");
                         Files.write(
-                                pack.getWorkingPath()
+                            this.pack.getWorkingPath()
                                         .resolve("assets" + File.separator + "minecraft" + File.separator + "lang"
                                                 + File.separator + file2 + ".json"),
-                                Collections.singleton(packConverter.getGson().toJson(out)), Charset.forName("UTF-8"));
+                                Collections.singleton(this.packConverter.getGson().toJson(out)),
+                            StandardCharsets.UTF_8);
 
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -111,9 +114,10 @@ public class LangConverter extends RPConverter {
                 });
 
         for (int i = 0; i < models.size(); i++) {
-            Logger.log("Deleting: " + pack.getWorkingPath().resolve("assets" + File.separator + "minecraft"
+            Logger.log("Deleting: " + this.pack.getWorkingPath().resolve("assets" + File.separator + "minecraft"
                     + File.separator + "lang" + File.separator + models.get(i)));
-            Files.delete(pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "lang"
+            Files.delete(
+                this.pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "lang"
                     + File.separator + models.get(i)));
         }
     }

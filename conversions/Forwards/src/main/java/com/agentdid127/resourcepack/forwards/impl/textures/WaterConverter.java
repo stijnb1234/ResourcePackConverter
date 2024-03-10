@@ -16,11 +16,11 @@ public class WaterConverter extends RPConverter {
 
   @Override
   public void convert() throws IOException {
-    Path blocks = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "textures" + File.separator + "blocks");
+    Path blocks = this.pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "textures" + File.separator + "blocks");
 
-    colorize(32, 1024, blocks.resolve("water_flow.png"));
-    colorize(32,1024, blocks.resolve("water_still.png"));
-    colorize(32, 32, blocks.resolve("water_overlay.png"));
+    this.colorize(32, 1024, blocks.resolve("water_flow.png"));
+    this.colorize(32,1024, blocks.resolve("water_still.png"));
+    this.colorize(32, 32, blocks.resolve("water_overlay.png"));
 
   }
 

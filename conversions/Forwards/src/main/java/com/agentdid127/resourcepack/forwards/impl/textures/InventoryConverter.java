@@ -15,7 +15,7 @@ public class InventoryConverter extends RPConverter {
 
     @Override
     public void convert() throws IOException {
-        Path imagePath = pack.getWorkingPath()
+        Path imagePath = this.pack.getWorkingPath()
                 .resolve("assets" + File.separator + "minecraft" + File.separator + "textures" + File.separator + "gui"
                         + File.separator + "container" + File.separator + "inventory.png");
         if (!imagePath.toFile().exists())

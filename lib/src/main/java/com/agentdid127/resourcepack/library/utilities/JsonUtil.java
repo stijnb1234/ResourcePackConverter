@@ -6,13 +6,13 @@ import com.google.gson.JsonArray;
 public class JsonUtil {
 
   public static JsonArray add(JsonArray lhs, JsonArray rhs) {
-    return add(lhs, rhs, (byte)1);
+    return JsonUtil.add(lhs, rhs, (byte)1);
   }
 
   public static JsonArray add(JsonArray lhs, JsonArray rhs, byte sign) {
     JsonArray newArray = new JsonArray();
     for (int i = 0; i < 3; i++)
-      newArray.add(add(lhs, rhs, i, sign));
+      newArray.add(JsonUtil.add(lhs, rhs, i, sign));
     return newArray;
   }
 
@@ -29,20 +29,20 @@ public class JsonUtil {
   }
 
   public static JsonArray subtract(JsonArray lhs, JsonArray rhs) {
-    return add(lhs, rhs, (byte)-1);
+    return JsonUtil.add(lhs, rhs, (byte)-1);
   }
 
   public static JsonArray multiply(JsonArray lhs, JsonArray rhs) {
     JsonArray newArray = new JsonArray();
     for (int i = 0; i < 3; i++)
-      newArray.add(multiply(lhs, rhs, i));
+      newArray.add(JsonUtil.multiply(lhs, rhs, i));
     return newArray;
   }
 
   public static JsonArray divide(JsonArray lhs, JsonArray rhs) {
     JsonArray newArray = new JsonArray();
     for (int i = 0; i < 3; i++)
-      newArray.add(divide(lhs, rhs, i));
+      newArray.add(JsonUtil.divide(lhs, rhs, i));
     return newArray;
   }
 

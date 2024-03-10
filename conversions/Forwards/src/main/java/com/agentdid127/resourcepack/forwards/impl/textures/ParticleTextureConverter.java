@@ -26,7 +26,7 @@ public class ParticleTextureConverter extends RPConverter {
      */
     @Override
     public void convert() throws IOException {
-        Path imagePath = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator
+        Path imagePath = this.pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator
                 + "textures" + File.separator + "particle" + File.separator);
         if (!imagePath.toFile().exists() || !imagePath.resolve("particles.png").toFile().exists())
             return;
@@ -38,14 +38,14 @@ public class ParticleTextureConverter extends RPConverter {
 
         // Particles
         boolean isLegacy = false;
-        if (from <= Util.getVersionProtocol(packConverter.getGson(), "1.12.2")) {
+        if (this.from <= Util.getVersionProtocol(this.packConverter.getGson(), "1.12.2")) {
             iconvert.newImage(256, 256);
             iconvert.subImage(0, 0, 128, 128, 0, 0);
             isLegacy = iconvert.store();
         }
 
-        if (from <= Util.getVersionProtocol(packConverter.getGson(), "1.13.2")
-                && to >= Util.getVersionProtocol(packConverter.getGson(), "1.14")) {
+        if (this.from <= Util.getVersionProtocol(this.packConverter.getGson(), "1.13.2")
+                && this.to >= Util.getVersionProtocol(this.packConverter.getGson(), "1.14")) {
             defaultW = 256;
             defaultH = 256;
             if (!isLegacy)
@@ -415,7 +415,8 @@ public class ParticleTextureConverter extends RPConverter {
 
             iconvert.newImage(8, 8);
             iconvert.subImage(8, 16, 16, 24, 0, 0);
-            iconvert.store(pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator
+            iconvert.store(
+                this.pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator
                     + "textures" + File.separator + "entity" + File.separator + "fishing_hook.png"));
         }
     }

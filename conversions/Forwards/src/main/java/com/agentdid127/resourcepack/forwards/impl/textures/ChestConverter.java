@@ -20,21 +20,21 @@ public class ChestConverter extends RPConverter {
      */
     @Override
     public void convert() throws IOException {
-        Path imagePath = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator
+        Path imagePath = this.pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator
                 + "textures" + File.separator + "entity" + File.separator + "chest" + File.separator);
         if (!imagePath.toFile().exists())
             return;
 
         // Double chest
-        doubleChest(imagePath, "normal");
-        doubleChest(imagePath, "trapped");
-        doubleChest(imagePath, "christmas");
+      this.doubleChest(imagePath, "normal");
+      this.doubleChest(imagePath, "trapped");
+      this.doubleChest(imagePath, "christmas");
 
         // Normal Chest
-        chest(imagePath, "normal");
-        chest(imagePath, "trapped");
-        chest(imagePath, "christmas");
-        chest(imagePath, "ender");
+      this.chest(imagePath, "normal");
+      this.chest(imagePath, "trapped");
+      this.chest(imagePath, "christmas");
+      this.chest(imagePath, "ender");
     }
 
     /**

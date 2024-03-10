@@ -15,7 +15,7 @@ public class Pack {
 
     public Pack(Path path) {
         this.path = path;
-        this.handler = createHandler();
+        handler = this.createHandler();
     }
 
     public Handler createHandler() {
@@ -29,7 +29,7 @@ public class Pack {
      * @return The Pack information
      */
     public static Pack parse(Path path) {
-        if (!path.toString().contains(CONVERTED_SUFFIX))
+        if (!path.toString().contains(Pack.CONVERTED_SUFFIX))
             if (path.toFile().isDirectory() && path.resolve("pack.mcmeta").toFile().exists())
                 return new Pack(path);
             else if (path.toString().endsWith(".zip"))
@@ -38,25 +38,25 @@ public class Pack {
     }
 
     public Path getOriginalPath() {
-        return path;
+        return this.path;
     }
 
     public Handler getHandler() {
-        return handler;
+        return this.handler;
     }
 
     public Path getWorkingPath() {
-        return path.getParent().resolve(getFileName() + CONVERTED_SUFFIX);
+        return this.path.getParent().resolve(this.getFileName() + Pack.CONVERTED_SUFFIX);
     }
 
     public String getFileName() {
-        return path.getFileName().toString();
+        return this.path.getFileName().toString();
     }
 
     @Override
     public String toString() {
         return "ResourcePack{" +
-                "path=" + path +
+                "path=" + this.path +
                 '}';
     }
 
@@ -73,15 +73,15 @@ public class Pack {
          * @throws IOException Issues with conversion
          */
         public void setup() throws IOException {
-            if (pack.getWorkingPath().toFile().exists()) {
+            if (this.pack.getWorkingPath().toFile().exists()) {
                 Logger.log("  Deleting existing conversion");
-                Util.deleteDirectoryAndContents(pack.getWorkingPath());
+                Util.deleteDirectoryAndContents(this.pack.getWorkingPath());
             }
 
             Logger.log("  Copying existing pack");
-            Util.copyDir(pack.getOriginalPath(), pack.getWorkingPath());
+            Util.copyDir(this.pack.getOriginalPath(), this.pack.getWorkingPath());
 
-            bomRemover(pack.getWorkingPath());
+          Handler.bomRemover(this.pack.getWorkingPath());
         }
 
         static void bomRemover(Path workingPath) throws IOException {
@@ -100,7 +100,7 @@ public class Pack {
         @Override
         public String toString() {
             return "Handler{" +
-                    "pack=" + pack +
+                    "pack=" + this.pack +
                     '}';
         }
     }

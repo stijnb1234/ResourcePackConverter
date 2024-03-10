@@ -30,7 +30,7 @@ public class MCPatcherBackwardsConverter extends RPConverter {
      */
     @Override
     public void convert() throws IOException {
-        Path mc = pack.getWorkingPath()
+        Path mc = this.pack.getWorkingPath()
             .resolve("assets" + File.separator + "minecraft");
         if (mc.resolve("optifine").toFile().exists()) {
             if (PackConverter.DEBUG) {
@@ -41,7 +41,7 @@ public class MCPatcherBackwardsConverter extends RPConverter {
 
         Path models = mc.resolve("mcpatcher");
         if (models.toFile().exists())
-            findFiles(models);
+            this.findFiles(models);
     }
 
     /**
@@ -55,8 +55,8 @@ public class MCPatcherBackwardsConverter extends RPConverter {
         File[] fList = directory.listFiles();
         for (File file : fList) {
             if (file.isDirectory()) {
-                remapProperties(Paths.get(file.getPath()));
-                findFiles(Paths.get(file.getPath()));
+                this.remapProperties(Paths.get(file.getPath()));
+                this.findFiles(Paths.get(file.getPath()));
             }
         }
     }
@@ -82,19 +82,20 @@ public class MCPatcherBackwardsConverter extends RPConverter {
                         try (OutputStream output = new FileOutputStream(model.toString())) {
                             // updates textures
                             if (prop.containsKey("texture"))
-                                prop.setProperty("texture", replaceTextures(prop));
+                                prop.setProperty("texture", this.replaceTextures(prop));
 
                             // Updates Item IDs
                             if (prop.containsKey("matchItems"))
                                 prop.setProperty("matchItems",
-                                        updateID("matchItems", prop, "regular").replaceAll("\"", ""));
+                                    this.updateID("matchItems", prop, "regular").replaceAll("\"", ""));
 
                             if (prop.containsKey("items"))
-                                prop.setProperty("items", updateID("items", prop, "regular").replaceAll("\"", ""));
+                                prop.setProperty("items",
+                                    this.updateID("items", prop, "regular").replaceAll("\"", ""));
 
                             if (prop.containsKey("matchBlocks"))
                                 prop.setProperty("matchBlocks",
-                                        updateID("matchBlocks", prop, "regular").replaceAll("\"", ""));
+                                    this.updateID("matchBlocks", prop, "regular").replaceAll("\"", ""));
 
                             // Saves File
                             prop.store(output, "");
@@ -115,7 +116,7 @@ public class MCPatcherBackwardsConverter extends RPConverter {
      * @return
      */
     protected String replaceTextures(PropertiesEx prop) {
-        NameConverter nameConverter = packConverter.getConverter(NameConverter.class);
+        NameConverter nameConverter = this.packConverter.getConverter(NameConverter.class);
         String properties = prop.getProperty("texture");
         if (properties.startsWith("textures/block/"))
             properties = "textures/blocks/" + nameConverter.getBlockMapping();
@@ -132,7 +133,7 @@ public class MCPatcherBackwardsConverter extends RPConverter {
      * @return
      */
     protected String updateID(String type, PropertiesEx prop, String selection) {
-        JsonObject id = Util.readJsonResource(packConverter.getGson(), "/backwards/ids.json").get(selection)
+        JsonObject id = Util.readJsonResource(this.packConverter.getGson(), "/backwards/ids.json").get(selection)
                 .getAsJsonObject();
         String[] split = prop.getProperty(type).split(" ");
         String properties2 = " ";
@@ -142,8 +143,7 @@ public class MCPatcherBackwardsConverter extends RPConverter {
         for (String item : split)
             properties2 += item + " ";
         properties2.substring(0, properties2.length() - 1);
-        if (prop.containsKey("metadata"))
-            prop.remove("metadata");
+        prop.remove("metadata");
         return properties2;
     }
 }

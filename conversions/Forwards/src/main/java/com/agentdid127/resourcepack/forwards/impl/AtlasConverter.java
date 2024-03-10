@@ -22,9 +22,9 @@ public class AtlasConverter extends RPConverter {
 
     @Override
     public void convert() throws IOException {
-        Path atlases = pack.getWorkingPath()
+        Path atlases = this.pack.getWorkingPath()
                 .resolve("assets" + File.separator + "minecraft" + File.separator + "atlases");
-        Path textures = pack.getWorkingPath()
+        Path textures = this.pack.getWorkingPath()
                 .resolve("assets" + File.separator + "minecraft" + File.separator + "textures");
 
         if (!atlases.toFile().exists())
@@ -38,19 +38,20 @@ public class AtlasConverter extends RPConverter {
                     source.addProperty("type", "directory");
                     source.addProperty("source", file.getName());
                     source.addProperty("prefix", file.getName() + "/");
-                    sources.add(source);
-                    findFiles(textures.resolve(file.getName()), file.getName());
+                  this.sources.add(source);
+                  this.findFiles(textures.resolve(file.getName()), file.getName());
                 } else if (file.getName().endsWith(".png")) {
                     source.addProperty("type", "single");
                     source.addProperty("resource", file.getName().replaceAll("\\.png", ""));
-                    sources.add(source);
+                  this.sources.add(source);
                 }
             }
-            out.add("sources", sources);
+          this.out.add("sources", this.sources);
             File output = atlases.resolve("blocks.json").toFile();
             if (!output.exists()) {
                 OutputStream os = new FileOutputStream(output);
-                os.write(packConverter.getGson().toJson(out).getBytes(StandardCharsets.UTF_8));
+                os.write(
+                    this.packConverter.getGson().toJson(this.out).getBytes(StandardCharsets.UTF_8));
                 os.close();
             }
         }
@@ -64,9 +65,9 @@ public class AtlasConverter extends RPConverter {
                     source.addProperty("type", "directory");
                     source.addProperty("source", prefix + "/" + file.getName());
                     source.addProperty("prefix", prefix + "/" + file.getName() + "/");
-                    sources.add(source);
+                  this.sources.add(source);
                     String nextPrefix = prefix + "/" + file.getName();
-                    findFiles(directory.resolve(file.getName()), nextPrefix);
+                  this.findFiles(directory.resolve(file.getName()), nextPrefix);
                 }
             }
     }

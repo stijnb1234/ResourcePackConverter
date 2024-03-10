@@ -9,28 +9,28 @@ public abstract class RPConverter extends Converter {
     protected PackConverter packConverter;
     protected Pack pack;
 
-    private boolean unstable;
+    private final boolean unstable;
     
     public RPConverter(PackConverter packConverter, String name, int priority) {
 	super(name, priority);
         this.packConverter = packConverter;
-	      this.pack = null;
-        this.unstable = false;
+	      pack = null;
+        unstable = false;
     }
 
   public RPConverter(PackConverter packConverter, String name, int priority, boolean unstable) {
     super(name, priority);
     this.packConverter = packConverter;
-    this.pack = null;
+    pack = null;
     this.unstable = unstable;
   }
 
     public void convert(Pack pack) throws IOException {
 	    this.pack = pack;
-	    convert();
+      this.convert();
     }
 
     public boolean isUnstable() {
-      return unstable;
+      return this.unstable;
     }
 }

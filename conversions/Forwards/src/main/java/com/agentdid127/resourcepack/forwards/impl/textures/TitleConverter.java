@@ -20,7 +20,7 @@ public class TitleConverter extends RPConverter {
      */
     @Override
     public void convert() throws IOException {
-        Path imagePath = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator
+        Path imagePath = this.pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator
                 + "textures" + File.separator + "gui" + File.separator + "title" + File.separator + "minecraft.png");
         if (!imagePath.toFile().exists())
             return;

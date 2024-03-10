@@ -13,6 +13,7 @@ import com.google.gson.JsonObject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,17 +23,17 @@ import java.util.List;
 import java.util.Map;
 
 public class ModelConverter extends RPConverter {
-    private int version;
-    private int from;
-    protected String light = "none";
+    private final int version;
+    private final int from;
+    protected String light;
 
     protected Path models;
 
     public ModelConverter(PackConverter packConverter, String lightIn, int versionIn, int fromIn) {
         super(packConverter, "ModelConverter", 1);
-        light = lightIn;
-        version = versionIn;
-        from = fromIn;
+        this.light = lightIn;
+        this.version = versionIn;
+        this.from = fromIn;
     }
 
     /**
@@ -42,11 +43,11 @@ public class ModelConverter extends RPConverter {
      */
     @Override
     public void convert() throws IOException {
-        Path models = pack.getWorkingPath()
+        Path models = this.pack.getWorkingPath()
                 .resolve("assets" + File.separator + "minecraft" + File.separator + "models");
         if (!models.toFile().exists())
             return;
-        findFiles(models);
+        this.findFiles(models);
     }
 
     /**
@@ -60,8 +61,8 @@ public class ModelConverter extends RPConverter {
         File[] fList = directory.listFiles();
         for (File file : fList) {
             if (file.isDirectory()) {
-                remapModelJson(Paths.get(file.getPath()));
-                findFiles(Paths.get(file.getPath()));
+                this.remapModelJson(Paths.get(file.getPath()));
+                this.findFiles(Paths.get(file.getPath()));
             }
         }
     }
@@ -78,13 +79,13 @@ public class ModelConverter extends RPConverter {
         Files.list(path).filter(path1 -> path1.toString().endsWith(".json")).forEach(model -> {
             try {
                 JsonObject jsonObject;
-                if (Util.readJson(packConverter.getGson(), model) != null
-                        && Util.readJson(packConverter.getGson(), model).isJsonObject())
-                    jsonObject = Util.readJson(packConverter.getGson(), model);
+                if (Util.readJson(this.packConverter.getGson(), model) != null
+                        && Util.readJson(this.packConverter.getGson(), model).isJsonObject())
+                    jsonObject = Util.readJson(this.packConverter.getGson(), model);
                 else {
                     if (PackConverter.DEBUG) {
                         Logger.log("Could not convert model: " + model.getFileName());
-                        if (Util.readJson(packConverter.getGson(), model) == null)
+                        if (Util.readJson(this.packConverter.getGson(), model) == null)
                             Logger.log("Check for Syntax Errors in file.");
                         else
                             Logger.log("File is not JSON Object.");
@@ -98,19 +99,19 @@ public class ModelConverter extends RPConverter {
                     for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
                         if (entry.getKey().equals("parent")) {
                             String parent = entry.getValue().getAsString().toLowerCase();
-                            jsonObject.addProperty(entry.getKey(), getParent(parent));
+                            jsonObject.addProperty(entry.getKey(), this.getParent(parent));
                         }
                     }
-                    if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.9")
-                        && version < Util.getVersionProtocol(packConverter.getGson(), "1.9")) {
+                    if (this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.9")
+                        && this.version < Util.getVersionProtocol(this.packConverter.getGson(), "1.9")) {
 
-                        jsonObject = mergeParent(jsonObject, jsonObject.get("parent").getAsString());
+                        jsonObject = this.mergeParent(jsonObject, jsonObject.get("parent").getAsString());
                     }
 
                 }
 
                 // GUI light system for 1.15.2
-                if (version < Util.getVersionProtocol(packConverter.getGson(), "1.15.2")) {
+                if (this.version < Util.getVersionProtocol(this.packConverter.getGson(), "1.15.2")) {
                     jsonObject.remove("gui_light");
                 }
                 // minify the json so we can replace spaces in paths easily
@@ -118,26 +119,26 @@ public class ModelConverter extends RPConverter {
 
                 // handle the remapping of textures, for models that use default texture names
                 if (jsonObject.has("textures") && jsonObject.get("textures").isJsonObject()) {
-                    NameConverter nameConverter = packConverter.getConverter(NameConverter.class);
+                    NameConverter nameConverter = this.packConverter.getConverter(NameConverter.class);
                     JsonObject initialTextureObject = jsonObject.getAsJsonObject("textures");
                     JsonObject textureObject = initialTextureObject.deepCopy();
                     for (Map.Entry<String, JsonElement> entry : initialTextureObject.entrySet()) {
                         String value = entry.getValue().getAsString();
                         textureObject.remove(entry.getKey());
 
-                        if (version < Util.getVersionProtocol(packConverter.getGson(), "1.19.3")
-                                && from >= Util.getVersionProtocol(packConverter.getGson(), "1.19.3")) {
+                        if (this.version < Util.getVersionProtocol(this.packConverter.getGson(), "1.19.3")
+                                && this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.19.3")) {
                             value = value.replaceAll("minecraft:", "");
                         }
                         // 1.19 Mappings
-                        if (version < Util.getVersionProtocol(packConverter.getGson(), "1.19"))
+                        if (this.version < Util.getVersionProtocol(this.packConverter.getGson(), "1.19"))
                             if (value.startsWith("block/"))
                                 value = "block/" + nameConverter.getBlockMapping19()
                                         .remap(value.substring("block/".length())).toLowerCase().replaceAll("[()]", "");
                         value = value.toLowerCase().replaceAll("[()]", "");
 
                         // 1.17 Mappings
-                        if (version < Util.getVersionProtocol(packConverter.getGson(), "1.17")) {
+                        if (this.version < Util.getVersionProtocol(this.packConverter.getGson(), "1.17")) {
                             if (value.startsWith("block/"))
                                 value = "block/" + nameConverter.getBlockMapping17()
                                         .remap(value.substring("block/".length())).toLowerCase().replaceAll("[()]", "");
@@ -148,19 +149,19 @@ public class ModelConverter extends RPConverter {
                         }
 
                         // 1.14 Mappings
-                        if (version < Util.getVersionProtocol(packConverter.getGson(), "1.14"))
+                        if (this.version < Util.getVersionProtocol(this.packConverter.getGson(), "1.14"))
                             if (value.startsWith("block/"))
                                 value = "block/"
                                         + nameConverter.getNewBlockMapping().remap(value.substring("block/".length()));
 
                         // Dyes
                         if (value.startsWith("item/") && value.contains("dye"))
-                            if (version < Util.getVersionProtocol(packConverter.getGson(), "1.14"))
+                            if (this.version < Util.getVersionProtocol(this.packConverter.getGson(), "1.14"))
                                 value = "item/"
                                         + nameConverter.getNewItemMapping().remap(value.substring("item/".length()));
 
                         // 1.13 Mappings
-                        if (version < Util.getVersionProtocol(packConverter.getGson(), "1.13")) {
+                        if (this.version < Util.getVersionProtocol(this.packConverter.getGson(), "1.13")) {
                             if (value.startsWith("block/")) {
                                 List<String> same = Arrays.asList("snow");
                                 String remap = nameConverter.getBlockMapping()
@@ -187,12 +188,12 @@ public class ModelConverter extends RPConverter {
                 }
 
                 // fix display settings for packs for 1.8
-                if (jsonObject.has("display") && from > Util.getVersionProtocol(packConverter.getGson(), "1.8")
-                        && version == Util.getVersionProtocol(packConverter.getGson(), "1.8")) {
+                if (jsonObject.has("display") && this.from > Util.getVersionProtocol(this.packConverter.getGson(), "1.8")
+                        && this.version == Util.getVersionProtocol(this.packConverter.getGson(), "1.8")) {
                     JsonElement display = jsonObject.remove("display");
 
                     if (display.isJsonObject()) {
-                        jsonObject.add("display", updateDisplay(packConverter.getGson(), display.getAsJsonObject()));
+                        jsonObject.add("display", ModelConverter.updateDisplay(this.packConverter.getGson(), display.getAsJsonObject()));
                     }
                 }
 
@@ -218,11 +219,12 @@ public class ModelConverter extends RPConverter {
                 }
 
 
-                if (!Util.readJson(packConverter.getGson(), model).equals(jsonObject)) {
-                    if (packConverter.DEBUG)
+                if (!Util.readJson(this.packConverter.getGson(), model).equals(jsonObject)) {
+                    if (PackConverter.DEBUG)
                         Logger.log("Updating Model: " + model.getFileName());
-                    Files.write(model, Collections.singleton(packConverter.getGson().toJson(jsonObject)),
-                            Charset.forName("UTF-8"));
+                    Files.write(model, Collections.singleton(
+                            this.packConverter.getGson().toJson(jsonObject)),
+                        StandardCharsets.UTF_8);
                 }
             } catch (IOException e) {
                 throw Util.propagate(e);
@@ -234,38 +236,38 @@ public class ModelConverter extends RPConverter {
         parent = parent.replace(" ", "_");
 
         // Get block/item parents renamed
-        if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.19.3")
-            && version < Util.getVersionProtocol(packConverter.getGson(), "1.19.3"))
+        if (this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.19.3")
+            && this.version < Util.getVersionProtocol(this.packConverter.getGson(), "1.19.3"))
             parent = parent.replaceAll("minecraft:", "");
 
-        if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.19")
-            && version < Util.getVersionProtocol(packConverter.getGson(), "1.19"))
+        if (this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.19")
+            && this.version < Util.getVersionProtocol(this.packConverter.getGson(), "1.19"))
             if (parent.startsWith("block/"))
-                parent = setParent("block/", "/backwards/blocks.json", parent, "1_19");
+                parent = this.setParent("block/", "/backwards/blocks.json", parent, "1_19");
 
-        if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.17")
-            && version < Util.getVersionProtocol(packConverter.getGson(), "1.17")) {
+        if (this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.17")
+            && this.version < Util.getVersionProtocol(this.packConverter.getGson(), "1.17")) {
             if (parent.startsWith("block/"))
-                parent = setParent("block/", "/backwards/blocks.json", parent, "1_17");
+                parent = this.setParent("block/", "/backwards/blocks.json", parent, "1_17");
             if (parent.startsWith("item/"))
-                parent = setParent("item/", "/backwards/items.json", parent, "1_17");
+                parent = this.setParent("item/", "/backwards/items.json", parent, "1_17");
         }
 
-        if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.14")
-            && version < Util.getVersionProtocol(packConverter.getGson(), "1.14")) {
+        if (this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.14")
+            && this.version < Util.getVersionProtocol(this.packConverter.getGson(), "1.14")) {
             if (parent.startsWith("block/"))
-                parent = setParent("block/", "/backwards/blocks.json", parent, "1_14");
+                parent = this.setParent("block/", "/backwards/blocks.json", parent, "1_14");
             if (parent.startsWith("item/"))
-                parent = setParent("item/", "/backwards/items.json", parent, "1_14");
+                parent = this.setParent("item/", "/backwards/items.json", parent, "1_14");
         }
 
-        if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.13")
-            && version < Util.getVersionProtocol(packConverter.getGson(), "1.13")) {
+        if (this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.13")
+            && this.version < Util.getVersionProtocol(this.packConverter.getGson(), "1.13")) {
 
             if (parent.startsWith("block/"))
-                parent = setParent("block/", "/backwards/blocks.json", parent, "1_13");
+                parent = this.setParent("block/", "/backwards/blocks.json", parent, "1_13");
             if (parent.startsWith("item/"))
-                parent = setParent("item/", "/backwards/items.json", parent, "1_13");
+                parent = this.setParent("item/", "/backwards/items.json", parent, "1_13");
 
 
         }
@@ -275,23 +277,23 @@ public class ModelConverter extends RPConverter {
     protected JsonObject mergeParent(JsonObject current, String parent) {
         JsonObject jsonObject = current.deepCopy();
 
-        if (parent == null || !models.resolve(parent + ".json").toFile().exists()) {
+        if (parent == null || !this.models.resolve(parent + ".json").toFile().exists()) {
             return jsonObject;
         }
         if (!current.has("parent")) {
             return jsonObject;
         } else {
-            Path parentPath = models.resolve(parent + ".json");
+            Path parentPath = this.models.resolve(parent + ".json");
 
             try {
 
-                JsonObject parentObj = Util.readJson(packConverter.getGson(), parentPath);
+                JsonObject parentObj = Util.readJson(this.packConverter.getGson(), parentPath);
                 if (parentObj != null) {
                     jsonObject.remove("parent");
                     if (parentObj.has("parent")) {
                         String parentStr = parentObj.get("parent").getAsString();
-                        String parentVal = parentStr == null ? null : getParent(parentStr);
-                        jsonObject = mergeParent(parentObj, parentVal);
+                        String parentVal = parentStr == null ? null : this.getParent(parentStr);
+                        jsonObject = this.mergeParent(parentObj, parentVal);
                     }
 
                     if (!jsonObject.has("elements") && current.has("elements")) {
@@ -369,7 +371,7 @@ public class ModelConverter extends RPConverter {
      */
     protected String setParent(String prefix, String path, String parent, String item) {
         String parent2 = parent.replace(prefix, "");
-        JsonObject file = Util.readJsonResource(packConverter.getGson(), path).getAsJsonObject(item);
+        JsonObject file = Util.readJsonResource(this.packConverter.getGson(), path).getAsJsonObject(item);
         if (file == null) {
             Logger.log("Prefix Failed on: " + parent);
             return "";
@@ -387,13 +389,14 @@ public class ModelConverter extends RPConverter {
         boolean found = false;
         JsonObject firstPerson = defaults.get("firstperson").getAsJsonObject().deepCopy();
         if (display.has("firstperson_righthand")) {
-            firstPerson = updateDisplayFirstPerson(gson, display.remove("firstperson_righthand").getAsJsonObject());
+            firstPerson = ModelConverter.updateDisplayFirstPerson(gson, display.remove("firstperson_righthand").getAsJsonObject());
             found = true;
         }
         if (display.has("firstperson_lefthand")) {
             JsonObject firstPersonLeft = display.remove("firstperson_lefthand").getAsJsonObject();
             if (!found) {
-                firstPerson = updateDisplayFirstPerson(gson, getLeftHand(gson, firstPersonLeft));
+                firstPerson = ModelConverter.updateDisplayFirstPerson(gson,
+                    ModelConverter.getLeftHand(gson, firstPersonLeft));
             }
         }
         display.remove("firstperson");
@@ -403,13 +406,14 @@ public class ModelConverter extends RPConverter {
         found = false;
         JsonObject thirdPerson = defaults.get("thirdperson").getAsJsonObject().deepCopy();
         if (display.has("thirdperson_righthand")) {
-            thirdPerson = updateDisplayThirdPerson(gson, display.remove("thirdperson_righthand").getAsJsonObject());
+            thirdPerson = ModelConverter.updateDisplayThirdPerson(gson, display.remove("thirdperson_righthand").getAsJsonObject());
             found = true;
         }
         if (display.has("thirdperson_lefthand")) {
             JsonObject thirdPersonLeft = display.remove("thirdperson_lefthand").getAsJsonObject();
             if (!found) {
-                thirdPerson = updateDisplayThirdPerson(gson, getLeftHand(gson, thirdPersonLeft));
+                thirdPerson = ModelConverter.updateDisplayThirdPerson(gson,
+                    ModelConverter.getLeftHand(gson, thirdPersonLeft));
             }
         }
         display.remove("thirdperson");

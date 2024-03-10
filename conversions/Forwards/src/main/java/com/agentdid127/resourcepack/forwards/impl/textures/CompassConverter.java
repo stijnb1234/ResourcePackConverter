@@ -26,7 +26,7 @@ public class CompassConverter extends RPConverter {
         if (to > Util.getVersionProtocol(packConverter.getGson(), "1.13"))
             itemsT = "item";
         Path compassPath = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "textures" + File.separator + itemsT + File.separator + "compass.png");
-        items = compassPath.getParent();
+      items = compassPath.getParent();
         if (compassPath.toFile().exists()) {
             ImageConverter imageConverter = new ImageConverter(16, 512, compassPath);
             if (!imageConverter.fileIsPowerOfTwo()) return;
@@ -36,7 +36,7 @@ public class CompassConverter extends RPConverter {
                 String it = String.valueOf(i);
                 if (i < 10)
                     it = "0" + it;
-                compass(0, h, 16, h + 16, "compass_" + it, imageConverter);
+              compass(0, h, 16, h + 16, "compass_" + it, imageConverter);
             }
 
             if (items.resolve("compass.png.mcmeta").toFile().exists())

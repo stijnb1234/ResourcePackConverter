@@ -15,7 +15,7 @@ public abstract class PackConverter {
     protected final Map<Class<? extends RPConverter>, RPConverter> converters = new LinkedHashMap<>();
     protected Gson gson;
     public static boolean DEBUG = true;
-    public static boolean UNSTABLE = false;
+    public static boolean UNSTABLE;
 
     /**
      * Registers Converter.
@@ -23,8 +23,8 @@ public abstract class PackConverter {
      * @param converter
      */
     public void registerConverter(RPConverter converter) {
-        if ((UNSTABLE || !converter.isUnstable())) {
-            converters.put(converter.getClass(), converter);
+        if ((PackConverter.UNSTABLE || !converter.isUnstable())) {
+          this.converters.put(converter.getClass(), converter);
         }
     }
 
@@ -34,7 +34,7 @@ public abstract class PackConverter {
      * @return
      */
     public <T extends RPConverter> T getConverter(Class<T> clazz) {
-        return (T) converters.get(clazz);
+        return (T) this.converters.get(clazz);
     }
 
     /**
@@ -43,7 +43,7 @@ public abstract class PackConverter {
      * @return Gson Object of PackConverter Class
      */
     public Gson getGson() {
-        return gson;
+        return this.gson;
     }
 
     public void runPack(Pack pack) {
@@ -52,9 +52,9 @@ public abstract class PackConverter {
             pack.getHandler().setup();
             Logger.log("  Running Converters");
             for (int i = 0; i < 100; i++) {
-                for (RPConverter converter : converters.values()) {
+                for (RPConverter converter : this.converters.values()) {
                     if (converter.getPriority() == i) {
-                        if (DEBUG)
+                        if (PackConverter.DEBUG)
                             Logger.log("    Running " + converter.getClass().getSimpleName());
                         converter.convert(pack);
                     }
@@ -71,6 +71,6 @@ public abstract class PackConverter {
         Files.list(inputDir)
             .map(Pack::parse)
             .filter(Objects::nonNull)
-            .forEach(pack -> runPack(pack));
+            .forEach(pack -> this.runPack(pack));
     }
 }

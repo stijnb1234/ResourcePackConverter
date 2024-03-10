@@ -22,10 +22,10 @@ public class SpacesConverter extends RPConverter {
      */
     @Override
     public void convert() throws IOException {
-        Path assets = pack.getWorkingPath().resolve("assets");
+        Path assets = this.pack.getWorkingPath().resolve("assets");
         if (!assets.toFile().exists())
             return;
-        findFiles(assets);
+      this.findFiles(assets);
     }
 
     /**
@@ -39,9 +39,9 @@ public class SpacesConverter extends RPConverter {
             File directory = new File(path.toString());
             File[] fList = directory.listFiles();
             for (File file : fList) {
-                String dir = fixSpaces(file.toPath());
+                String dir = this.fixSpaces(file.toPath());
                 if (file.isDirectory())
-                    findFiles(Paths.get(dir));
+                  this.findFiles(Paths.get(dir));
             }
         }
     }
@@ -63,7 +63,7 @@ public class SpacesConverter extends RPConverter {
         if (ret == null)
             return "null";
 
-        if (ret && packConverter.DEBUG) {
+        if (ret && PackConverter.DEBUG) {
             Logger.log("      Renamed: " + path.getFileName().toString() + "->" + noSpaces);
             return path.getParent() + File.separator + noSpaces;
         } else if (!ret) {

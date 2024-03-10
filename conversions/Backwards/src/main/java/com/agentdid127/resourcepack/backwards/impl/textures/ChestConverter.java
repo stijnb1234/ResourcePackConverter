@@ -2,53 +2,61 @@ package com.agentdid127.resourcepack.backwards.impl.textures;
 
 import com.agentdid127.resourcepack.library.PackConverter;
 import com.agentdid127.resourcepack.library.RPConverter;
-import com.agentdid127.resourcepack.library.pack.Pack;
 import com.agentdid127.resourcepack.library.utilities.ImageConverter;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
+/**
+ * Converts Chests.
+ */
 public class ChestConverter extends RPConverter {
-    public ChestConverter(PackConverter packConverter) {
-        super(packConverter, "ChestConverter", 1);
-    }
 
-    /**
-     * Fixes Chest Textures in 1.15 Remaps textures, and updates images
-     *
-     * @throws IOException
-     */
-    @Override
-    public void convert() throws IOException {
-        Path imagePath = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "textures" + File.separator + "entity" + File.separator + "chest" + File.separator);
-        if (!imagePath.toFile().exists()) return;
+  /**
+   * Constructs a ChestConverter
+   * @param packConverter Main Pack Converter
+   */
+  public ChestConverter(PackConverter packConverter) {
+    super(packConverter, "ChestConverter", 1);
+  } // ChestConverter
 
-        // Double chest
-        doubleChest(imagePath, "normal");
-        doubleChest(imagePath, "trapped");
-        doubleChest(imagePath, "christmas");
+  /**
+   * Fixes Chest Textures in 1.15 Remaps textures, and updates images.
+   *
+   * @throws IOException If the chest file fails to work.
+   */
+  @Override
+  public void convert() throws IOException {
+    Path imagePath = this.pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "textures" + File.separator + "entity" + File.separator + "chest" + File.separator);
+    if (imagePath.toFile().exists()) {
+      // Double chest
+      this.doubleChest(imagePath, "normal");
+      this.doubleChest(imagePath, "trapped");
+      this.doubleChest(imagePath, "christmas");
 
-        // Normal Chest
-        chest(imagePath, "normal");
-        chest(imagePath, "trapped");
-        chest(imagePath, "christmas");
-        chest(imagePath, "ender");
-    }
+      // Normal Chest
+      this.chest(imagePath, "normal");
+      this.chest(imagePath, "trapped");
+      this.chest(imagePath, "christmas");
+      this.chest(imagePath, "ender");
+    } // if
+  } // convert
 
-    /**
-     * Fixes Normal chests
-     * 
-     * @param imagePath
-     * @param name
-     * @throws IOException
-     */
-    private void chest(Path imagePath, String name) throws IOException {
-        int defaultW = 64, defaultH = 64;
-        if (!imagePath.resolve(name + ".png").toFile().exists()) return;
+  /**
+   * Fixes Normal chests.
+   *
+   * @param imagePath Path to the chest folder.
+   * @param name Name of the Chest.
+   * @throws IOException if the image fails to work.
+   */
+  private void chest(Path imagePath, String name) throws IOException {
+    int defaultW = 64, defaultH = 64;
+    if (imagePath.resolve(name + ".png").toFile().exists()) {
 
-        ImageConverter normal = new ImageConverter(defaultW, defaultH, imagePath.resolve(name + ".png"));
-        if (!normal.fileIsPowerOfTwo()) return;
+      ImageConverter normal = new ImageConverter(defaultW, defaultH,
+          imagePath.resolve(name + ".png"));
+      if (!normal.fileIsPowerOfTwo()) {
 
         // Create a new Image
         normal.newImage(defaultW, defaultH);
@@ -76,76 +84,79 @@ public class ChestConverter extends RPConverter {
         normal.subImage(3, 0, 5, 1, 1, 0);
         normal.subImage(4, 1, 6, 5, 1, 1, 1);
         normal.subImage(1, 1, 4, 4, 3, 1, 1);
+      } // if
+      // Store new Image
+      normal.store();
+    } // if
+  } // chest
 
-        // Store new Image
+  /**
+   * Splits Double Chests into two images.
+   *
+   * @param imagePath Image Path.
+   * @param name Name of the image.
+   * @throws IOException If the conversion fails.
+   */
+  private void doubleChest(Path imagePath, String name) throws IOException {
+    int defaultW = 128, defaultH = 64;
+
+    if (imagePath.resolve(name + "_left.png").toFile().exists() && imagePath.resolve(name + "_right.png").toFile().exists()) {
+      ImageConverter setup = new ImageConverter(64, 64, imagePath.resolve(name + "_left.png"));
+      setup.newImage(defaultW, defaultH);
+      setup.subImage(0, 0, 64, 64, 0, 0);
+      setup.addImage(imagePath.resolve(name + "_right.png"), 64, 0);
+      setup.store(imagePath.resolve(name + "_double.png"));
+    } // if
+
+    if (imagePath.resolve(name + "_double.png").toFile().exists()) {
+      ImageConverter normal = new ImageConverter(defaultW, defaultH, imagePath.resolve(name + "_double.png"));
+      if (normal.fileIsPowerOfTwo()) {
+
+        // Left Side
+        // Body
+        normal.newImage(defaultW, defaultH);
+
+        normal.subImage(14, 19, 29, 33, 59, 19, true);
+        normal.subImage(14, 0, 29, 14, 59, 0, true);
+        normal.subImage(29, 19, 44, 33, 29, 19, true);
+        normal.subImage(43, 14, 58, 19, 29, 14, 1);
+        normal.subImage(29, 0, 44, 14, 29, 0, true);
+        normal.subImage(29, 33, 43, 43, 44, 33, 1);
+        normal.subImage(43, 33, 58, 43, 29, 33, 1);
+        normal.subImage(14, 33, 29, 43, 58, 33, 1);
+        normal.subImage(29, 14, 43, 19, 44, 14, 1);
+        normal.subImage(14, 14, 29, 19, 58, 14, 1);
+
+        // Latch
+        normal.subImage(1, 0, 2, 1, 4, 0);
+        normal.subImage(2, 0, 3, 1, 2, 0);
+        normal.subImage(1, 1, 4, 5, 2, 1, 1);
+
+        // Right Side
+        // Body
+        normal.subImage(78, 0, 93, 14, 44, 0, true);
+        normal.subImage(93, 0, 108, 14, 14, 0, true);
+        normal.subImage(43, 19, 58, 33, 14, 19, true);
+        normal.subImage(64, 14, 78, 19, 0, 14, 1);
+        normal.subImage(78, 14, 93, 19, 73, 14, 1);
+        normal.subImage(107, 14, 122, 19, 14, 14, 1);
+        normal.subImage(78, 19, 93, 33, 44, 19, true);
+        normal.subImage(107, 33, 122, 43, 14, 33, 1);
+        normal.subImage(64, 33, 78, 43, 0, 33, 1);
+        normal.subImage(78, 33, 93, 43, 73, 33, 1);
+
+        // Latch
+        normal.subImage(65, 0, 66, 1, 3, 0);
+        normal.subImage(67, 0, 68, 1, 1, 0);
+        normal.subImage(64, 1, 65, 5, 0, 1, true);
+        normal.subImage(65, 1, 66, 5, 5, 1, true);
+        normal.subImage(68, 1, 69, 5, 1, 1, true);
         normal.store();
-    }
 
-    /**
-     * Splits Double Chests into 2 images
-     * 
-     * @param imagePath
-     * @param name
-     * @throws IOException
-     */
-    private void doubleChest(Path imagePath, String name) throws IOException {
-        int defaultW = 128, defaultH = 64;
+        imagePath.resolve(name + "_left.png").toFile().delete();
+        imagePath.resolve(name + "_right.png").toFile().delete();
 
-        if (imagePath.resolve(name + "_left.png").toFile().exists() && imagePath.resolve(name + "_right.png").toFile().exists()) {
-            ImageConverter setup = new ImageConverter(64, 64, imagePath.resolve(name + "_left.png"));
-            setup.newImage(defaultW, defaultH);
-            setup.subImage(0, 0, 64, 64, 0, 0);
-            setup.addImage(imagePath.resolve(name + "_right.png"), 64, 0);
-            setup.store(imagePath.resolve(name + "_double.png"));
-        }
-
-        if (imagePath.resolve(name + "_double.png").toFile().exists()) {
-            ImageConverter normal = new ImageConverter(defaultW, defaultH, imagePath.resolve(name + "_double.png"));
-            if (!normal.fileIsPowerOfTwo()) return;
-
-            // Left Side
-            // Body
-            normal.newImage(defaultW, defaultH);
-
-            normal.subImage(14, 19, 29, 33, 59, 19, true);
-            normal.subImage(14, 0, 29, 14, 59, 0, true);
-            normal.subImage(29, 19, 44, 33, 29, 19, true);
-            normal.subImage(43, 14, 58, 19, 29, 14, 1);
-            normal.subImage(29, 0, 44, 14, 29, 0, true);
-            normal.subImage(29, 33, 43, 43, 44, 33, 1);
-            normal.subImage(43, 33, 58, 43, 29, 33, 1);
-            normal.subImage(14, 33, 29, 43, 58, 33, 1);
-            normal.subImage(29, 14, 43, 19, 44, 14, 1);
-            normal.subImage(14, 14, 29, 19, 58, 14, 1);
-
-            // Latch
-            normal.subImage(1, 0, 2, 1, 4, 0);
-            normal.subImage(2, 0, 3, 1, 2, 0);
-            normal.subImage(1, 1, 4, 5, 2, 1, 1);
-
-            // Right Side
-            // Body
-            normal.subImage(78, 0, 93, 14, 44, 0, true);
-            normal.subImage(93, 0, 108, 14, 14, 0, true);
-            normal.subImage(43, 19, 58, 33, 14, 19, true);
-            normal.subImage(64, 14, 78, 19, 0, 14, 1);
-            normal.subImage(78, 14, 93, 19, 73, 14, 1);
-            normal.subImage(107, 14, 122, 19, 14, 14, 1);
-            normal.subImage(78, 19, 93, 33, 44, 19, true);
-            normal.subImage(107, 33, 122, 43, 14, 33, 1);
-            normal.subImage(64, 33, 78, 43, 0, 33, 1);
-            normal.subImage(78, 33, 93, 43, 73, 33, 1);
-
-            // Latch
-            normal.subImage(65, 0, 66, 1, 3, 0);
-            normal.subImage(67, 0, 68, 1, 1, 0);
-            normal.subImage(64, 1, 65, 5, 0, 1, true);
-            normal.subImage(65, 1, 66, 5, 5, 1, true);
-            normal.subImage(68, 1, 69, 5, 1, 1, true);
-            normal.store();
-
-            imagePath.resolve(name + "_left.png").toFile().delete();
-            imagePath.resolve(name + "_right.png").toFile().delete();
-        }
-    }
-}
+      } // if
+    } // if
+  } // doubleChest
+} // ChestConverter

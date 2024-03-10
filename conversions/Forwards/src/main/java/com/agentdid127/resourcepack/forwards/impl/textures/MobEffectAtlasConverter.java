@@ -16,46 +16,46 @@ public class MobEffectAtlasConverter extends RPConverter {
     static {
         // Col #1
         // x: 0, y: 0, id: 0 - speed
-        MOB_EFFECTS.put(0, "speed.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(0, "speed.png");
         // x: 1, y: 0, id: 1 - slowness
-        MOB_EFFECTS.put(1, "slowness.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(1, "slowness.png");
         // x: 2, y: 0, id: 2 - haste
-        MOB_EFFECTS.put(2, "haste.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(2, "haste.png");
         // x: 3, y: 0, id: 3 - mining fatigue
-        MOB_EFFECTS.put(3, "mining_fatigue.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(3, "mining_fatigue.png");
         // x: 4, y: 0, id: 4 - strength
-        MOB_EFFECTS.put(4, "strength.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(4, "strength.png");
         // x: 5, y: 0, id: 5 - weakness
-        MOB_EFFECTS.put(5, "weakness.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(5, "weakness.png");
         // x: 6, y: 0, id: 6 - poison
-        MOB_EFFECTS.put(6, "poison.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(6, "poison.png");
         // x: 7, y: 0, id: 7 - regeneration
-        MOB_EFFECTS.put(7, "regeneration.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(7, "regeneration.png");
         // x: 8, y: 0, id: 8 - slow falling
-        MOB_EFFECTS.put(8, "slow_falling.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(8, "slow_falling.png");
         // x: 9, y: 0, id: 9 - conduit power
-        MOB_EFFECTS.put(9, "conduit_power.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(9, "conduit_power.png");
         // x: 10, y: 0, id: 10 - dolphins grace
-        MOB_EFFECTS.put(10, "dolphins_grace.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(10, "dolphins_grace.png");
         // x: 11, y: 0, id: 11 - unknown
 
         // Col #2
         // x: 0, y: 1, id: 256 - invisibility
-        MOB_EFFECTS.put(256, "invisibility.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(256, "invisibility.png");
         // x: 1, y: 1, id: 257 - hunger
-        MOB_EFFECTS.put(257, "hunger.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(257, "hunger.png");
         // x: 2, y: 1, id: 258 - jump boost
-        MOB_EFFECTS.put(258, "jump_boost.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(258, "jump_boost.png");
         // x: 3, y: 1, id: 259 - nausea
-        MOB_EFFECTS.put(259, "nausea.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(259, "nausea.png");
         // x: 4, y: 1, id: 260 - night vision
-        MOB_EFFECTS.put(260, "night_vision.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(260, "night_vision.png");
         // x: 5, y: 1, id: 261 - blindness
-        MOB_EFFECTS.put(261, "blindness.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(261, "blindness.png");
         // x: 6, y: 1, id: 262 - resistance
-        MOB_EFFECTS.put(262, "resistance.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(262, "resistance.png");
         // x: 7, y: 1, id: 263 - fire resistance
-        MOB_EFFECTS.put(263, "fire_resistance.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(263, "fire_resistance.png");
         // x: 8, y: 1, id: 264 - unknown
         // x: 9, y: 1, id: 265 - unknown
         // x: 10, y: 1, id: 266 - unknown
@@ -63,21 +63,21 @@ public class MobEffectAtlasConverter extends RPConverter {
 
         // Col #3
         // x: 0, y: 2, id: 512 - water breathing
-        MOB_EFFECTS.put(512, "water_breathing.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(512, "water_breathing.png");
         // x: 1, y: 2, id: 513 - wither
-        MOB_EFFECTS.put(513, "wither.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(513, "wither.png");
         // x: 2, y: 2, id: 514 - absorption
-        MOB_EFFECTS.put(514, "absorption.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(514, "absorption.png");
         // x: 3, y: 2, id: 515 - levitation
-        MOB_EFFECTS.put(515, "levitation.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(515, "levitation.png");
         // x: 4, y: 2, id: 516 - glowing
-        MOB_EFFECTS.put(516, "glowing.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(516, "glowing.png");
         // x: 5, y: 2, id: 517 - luck
-        MOB_EFFECTS.put(517, "luck.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(517, "luck.png");
         // x: 6, y: 2, id: 518 - bad luck
-        MOB_EFFECTS.put(518, "unluck.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(518, "unluck.png");
         // x: 7, y: 2, id: 519 - health boost
-        MOB_EFFECTS.put(519, "health_boost.png");
+      MobEffectAtlasConverter.MOB_EFFECTS.put(519, "health_boost.png");
         // x: 8, y: 2, id: 520 - unknown
         // x: 9, y: 2, id: 521 - unknown
         // x: 10, y: 2, id: 522 - unknown
@@ -95,7 +95,7 @@ public class MobEffectAtlasConverter extends RPConverter {
      */
     @Override
     public void convert() throws IOException {
-        Path inventoryPath = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator
+        Path inventoryPath = this.pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator
                 + "textures" + File.separator + "gui" + File.separator + "container" + File.separator
                 + "inventory.png");
         if (!inventoryPath.toFile().exists())
@@ -108,7 +108,7 @@ public class MobEffectAtlasConverter extends RPConverter {
             return;
         }
 
-        Path mobEffectPath = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator
+        Path mobEffectPath = this.pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator
                 + "textures" + File.separator + "mob_effect");
         if (!mobEffectPath.toFile().exists())
             mobEffectPath.toFile().mkdirs();
@@ -124,13 +124,13 @@ public class MobEffectAtlasConverter extends RPConverter {
         for (int y = 0; y < rows; ++y) {
             for (int x = 0; x < cols; ++x) {
                 int id = y * 256 + x; // 256 is a hack, idk what else to do
-                if (!MOB_EFFECTS.containsKey(id)) {
+                if (!MobEffectAtlasConverter.MOB_EFFECTS.containsKey(id)) {
                     if (PackConverter.DEBUG)
                         Logger.log("Could not find effect with RPID=" + id);
                     continue;
                 }
 
-                String effect_file_name = MOB_EFFECTS.get(id);
+                String effect_file_name = MobEffectAtlasConverter.MOB_EFFECTS.get(id);
                 if (PackConverter.DEBUG)
                     Logger.log("Effect: " + effect_file_name);
 

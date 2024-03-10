@@ -14,15 +14,15 @@ public abstract class RPPlugin extends Plugin<RPConverter> {
   }
 
   public String getFrom() {
-    return from;
+    return this.from;
   }
 
   public String getTo() {
-    return to;
+    return this.to;
   }
 
   public PackConverter getPackConverter() {
-    return packConverter;
+    return this.packConverter;
   }
 
   void setFrom(String from) {
@@ -34,6 +34,6 @@ public abstract class RPPlugin extends Plugin<RPConverter> {
   }
 
   void setPackConverter(PackConverter pc) {
-    this.packConverter = pc;
+    packConverter = pc;
   }
 }

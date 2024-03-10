@@ -44,22 +44,22 @@ public class NameConverter extends RPConverter {
      */
     @Override
     public void convert() throws IOException {
-        Path mc = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft");
+        Path mc = this.pack.getWorkingPath().resolve("assets" + File.separator + "minecraft");
 
-        Path models = pack.getWorkingPath()
+        Path models = this.pack.getWorkingPath()
                 .resolve("assets" + File.separator + "minecraft" + File.separator + "models");
         if (models.toFile().exists()) {
-            if (to < Util.getVersionProtocol(packConverter.getGson(), "1.19"))
-                renameAll(blockMapping19, ".json", models.resolve("block"));
+            if (this.to < Util.getVersionProtocol(this.packConverter.getGson(), "1.19"))
+                this.renameAll(this.blockMapping19, ".json", models.resolve("block"));
 
             // Update 1.14 items
-            if (to < Util.getVersionProtocol(packConverter.getGson(), "1.14"))
-                renameAll(newItemMapping, ".json", models.resolve("item"));
+            if (this.to < Util.getVersionProtocol(this.packConverter.getGson(), "1.14"))
+                this.renameAll(this.newItemMapping, ".json", models.resolve("item"));
 
             // 1.13 Models
-            if (to < Util.getVersionProtocol(packConverter.getGson(), "1.13")) {
-                renameAll(itemMapping, ".json", models.resolve("item"));
-                renameAll(blockMapping, ".json", models.resolve("block"));
+            if (this.to < Util.getVersionProtocol(this.packConverter.getGson(), "1.13")) {
+                this.renameAll(this.itemMapping, ".json", models.resolve("item"));
+                this.renameAll(this.blockMapping, ".json", models.resolve("block"));
 
                 if (models.resolve("item").resolve("banner.json").toFile().exists()) {
                     models.resolve("item").resolve("banner.json").toFile().delete();
@@ -69,27 +69,27 @@ public class NameConverter extends RPConverter {
         }
 
         // Update BlockStates
-        Path blockStates = pack.getWorkingPath()
+        Path blockStates = this.pack.getWorkingPath()
                 .resolve("assets" + File.separator + "minecraft" + File.separator + "blockstates");
         if (blockStates.toFile().exists())
-            renameAll(blockMapping, ".json", blockStates);
+            this.renameAll(this.blockMapping, ".json", blockStates);
 
         // Update textures
-        Path textures = pack.getWorkingPath()
+        Path textures = this.pack.getWorkingPath()
                 .resolve("assets" + File.separator + "minecraft" + File.separator + "textures");
         if (textures.toFile().exists()) {
             // 1.19
-            if (to < Util.getVersionProtocol(packConverter.getGson(), "1.19")
-                && from >= Util.getVersionProtocol(packConverter.getGson(), "1.19"))
-                renameAll(blockMapping19, ".png", textures.resolve("block"));
+            if (this.to < Util.getVersionProtocol(this.packConverter.getGson(), "1.19")
+                && this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.19"))
+                this.renameAll(this.blockMapping19, ".png", textures.resolve("block"));
 
             // 1.17 Squid
-            if (to < Util.getVersionProtocol(packConverter.getGson(), "1.17")
-                && from >= Util.getVersionProtocol(packConverter.getGson(), "1.17")) {
-                renameAll(blockMapping17, ".png", textures.resolve("block"));
-                renameAll(itemMapping17, ".png", textures.resolve("item"));
-                renameAll(blockMapping17, ".png", models.resolve("block"));
-                renameAll(itemMapping17, ".png", models.resolve("item"));
+            if (this.to < Util.getVersionProtocol(this.packConverter.getGson(), "1.17")
+                && this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.17")) {
+                this.renameAll(this.blockMapping17, ".png", textures.resolve("block"));
+                this.renameAll(this.itemMapping17, ".png", textures.resolve("item"));
+                this.renameAll(this.blockMapping17, ".png", models.resolve("block"));
+                this.renameAll(this.itemMapping17, ".png", models.resolve("item"));
                 if (textures.resolve(
                         "entity" + File.separator + "squid" + File.separator + "squid.png").toFile()
                     .exists())
@@ -101,8 +101,8 @@ public class NameConverter extends RPConverter {
             }
 
             // 1.16 Iron golems
-            if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.16")
-                && to < Util.getVersionProtocol(packConverter.getGson(), "1.16")) {
+            if (this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.16")
+                && this.to < Util.getVersionProtocol(this.packConverter.getGson(), "1.16")) {
                 if (textures.resolve(
                         "entity" + File.separator + "iron_golem" + File.separator + "iron_golem.png")
                     .toFile().exists())
@@ -115,26 +115,26 @@ public class NameConverter extends RPConverter {
                 // "iron_golem" + File.separator + "iron_golem.png"));
             }
 
-            if (to < Util.getVersionProtocol(packConverter.getGson(), "1.14")) {
-                renameAll(newBlockMapping, ".png", textures.resolve("block"));
-                renameAll(newBlockMapping, ".png.mcmeta", textures.resolve("block"));
-                renameAll(newItemMapping, ".png", textures.resolve("item"));
-                renameAll(newItemMapping, ".png.mcmeta", textures.resolve("item"));
+            if (this.to < Util.getVersionProtocol(this.packConverter.getGson(), "1.14")) {
+                this.renameAll(this.newBlockMapping, ".png", textures.resolve("block"));
+                this.renameAll(this.newBlockMapping, ".png.mcmeta", textures.resolve("block"));
+                this.renameAll(this.newItemMapping, ".png", textures.resolve("item"));
+                this.renameAll(this.newItemMapping, ".png.mcmeta", textures.resolve("item"));
             }
 
-            if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.13")
-                && to < Util.getVersionProtocol(packConverter.getGson(), "1.13")) {
-                renameAll(blockMapping, ".png", textures.resolve("block"));
-                renameAll(blockMapping, ".png.mcmeta", textures.resolve("block"));
+            if (this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.13")
+                && this.to < Util.getVersionProtocol(this.packConverter.getGson(), "1.13")) {
+                this.renameAll(this.blockMapping, ".png", textures.resolve("block"));
+                this.renameAll(this.blockMapping, ".png.mcmeta", textures.resolve("block"));
 
-                renameAll(itemMapping, ".png", textures.resolve("item"));
-                renameAll(itemMapping, ".png.mcmeta", textures.resolve("item"));
+                this.renameAll(this.itemMapping, ".png", textures.resolve("item"));
+                this.renameAll(this.itemMapping, ".png.mcmeta", textures.resolve("item"));
 
                 // 1.13 End Crystals
                 if (textures.resolve("entity" + File.separator + "end_crystal").toFile().exists())
                     Files.move(textures.resolve("entity" + File.separator + "end_crystal"),
                         textures.resolve("entity" + File.separator + "endercrystal"));
-                findEntityFiles(textures.resolve("entity"));
+                this.findEntityFiles(textures.resolve("entity"));
 
 
 
@@ -143,11 +143,11 @@ public class NameConverter extends RPConverter {
         }
 
         // Less than 1.12
-        if (from > Util.getVersionProtocol(packConverter.getGson(), "1.13")
-                && to < Util.getVersionProtocol(packConverter.getGson(), "1.13")) {
-            if (packConverter.DEBUG)
+        if (this.from > Util.getVersionProtocol(this.packConverter.getGson(), "1.13")
+                && this.to < Util.getVersionProtocol(this.packConverter.getGson(), "1.13")) {
+            if (PackConverter.DEBUG)
                 Logger.log("Finding files that are greater than 1.12");
-            findFiles(mc.resolve("textures"));
+            this.findFiles(mc.resolve("textures"));
         }
     }
 
@@ -163,9 +163,9 @@ public class NameConverter extends RPConverter {
             File[] fList = directory.listFiles();
             for (File file : fList) {
                 if (file.isDirectory()) {
-                    renameAll(entityMapping, ".png", Paths.get(file.getPath()));
-                    renameAll(entityMapping, ".png.mcmeta", Paths.get(file.getPath()));
-                    findEntityFiles(Paths.get(file.getPath()));
+                    this.renameAll(this.entityMapping, ".png", Paths.get(file.getPath()));
+                    this.renameAll(this.entityMapping, ".png.mcmeta", Paths.get(file.getPath()));
+                    this.findEntityFiles(Paths.get(file.getPath()));
                 }
             }
         }
@@ -184,25 +184,25 @@ public class NameConverter extends RPConverter {
             for (File file : fList) {
                 if (file.isDirectory()) {
                     if (file.getName().equals("item")) {
-                        if (packConverter.DEBUG)
+                        if (PackConverter.DEBUG)
                             Logger.log("Found Items folder, renaming");
                         Util.renameFile(path.resolve(file.getName()), file.getName().replaceAll("item", "items"));
                     }
 
                     if (file.getName().equals("block")) {
-                        if (packConverter.DEBUG)
+                        if (PackConverter.DEBUG)
                             Logger.log("Found blocks folder, renaming");
                         Util.renameFile(path.resolve(file.getName()), file.getName().replaceAll("block", "blocks"));
                     }
 
-                    findFiles(Paths.get(file.getPath()));
+                    this.findFiles(Paths.get(file.getPath()));
                 }
 
                 if (file.getName().contains("("))
                     Util.renameFile(path.resolve(file.getName()), file.getName().replaceAll("[()]", ""));
 
                 if (!file.getName().equals(file.getName().toLowerCase()))
-                    if (packConverter.DEBUG)
+                    if (PackConverter.DEBUG)
                         Logger.log("Renamed: " + file.getName() + "->" + file.getName().toLowerCase());
 
                 Util.renameFile(path.resolve(file.getName()), file.getName().toLowerCase());
@@ -223,7 +223,7 @@ public class NameConverter extends RPConverter {
             // remap grass blocks in order due to the cyclical way their names have changed,
             // i.e grass -> grass_block, tall_grass -> grass, double_grass -> tall_grass
             List<String> grasses = Arrays.asList("tall_grass", "grass", "grass_block");
-            if (from <= Util.getVersionProtocol(packConverter.getGson(), "1.12.2")
+            if (this.from <= Util.getVersionProtocol(this.packConverter.getGson(), "1.12.2")
                     && (path.endsWith("blockstates") || path.endsWith("textures" + File.separator + "block"))) {
                 grasses.stream().forEach(name -> {
                     String newName = mapping.remap(name);
@@ -231,15 +231,15 @@ public class NameConverter extends RPConverter {
                             newName + extension);
                     if (ret == null)
                         return;
-                    if (ret && packConverter.DEBUG)
+                    if (ret && PackConverter.DEBUG)
                         Logger.log("      Renamed: " + name + extension + "->" + newName + extension);
                     else if (!ret)
                         System.err.println("      Failed to rename: " + name + extension + "->" + newName + extension);
                 });
             }
 
-            if (from > Util.getVersionProtocol(packConverter.getGson(), "1.12.2") &&
-                to <= Util.getVersionProtocol(packConverter.getGson(), "1.12.2")) {
+            if (this.from > Util.getVersionProtocol(this.packConverter.getGson(), "1.12.2") &&
+                this.to <= Util.getVersionProtocol(this.packConverter.getGson(), "1.12.2")) {
                 List<String> snow = Arrays.asList("snow", "snow_block");
                 snow.stream().forEach(name -> {
                     String newName = mapping.remap(name);
@@ -248,7 +248,7 @@ public class NameConverter extends RPConverter {
                             newName + extension);
                         if (ret == null)
                             return;
-                        if (ret && packConverter.DEBUG)
+                        if (ret && PackConverter.DEBUG)
                             Logger.log("      Renamed: " + name + extension + "->" + newName + extension);
                         else if (!ret)
                             System.err.println("      Failed to rename: " + name + extension + "->" + newName + extension);
@@ -274,7 +274,7 @@ public class NameConverter extends RPConverter {
                     Boolean ret = Util.renameFile(path1, newName + extension);
                     if (ret == null)
                         return;
-                    if (ret && packConverter.DEBUG)
+                    if (ret && PackConverter.DEBUG)
                         Logger.log(
                                 "      Renamed: " + path1.getFileName().toString() + "->" + newName + extension);
                     else if (!ret)
@@ -286,46 +286,46 @@ public class NameConverter extends RPConverter {
     }
 
     public Mapping getBlockMapping() {
-        return blockMapping;
+        return this.blockMapping;
     }
 
     public Mapping getItemMapping() {
-        return itemMapping;
+        return this.itemMapping;
     }
 
     public Mapping getNewBlockMapping() {
-        return newBlockMapping;
+        return this.newBlockMapping;
     }
 
     public Mapping getNewItemMapping() {
-        return newItemMapping;
+        return this.newItemMapping;
     }
 
     public Mapping getItemMapping17() {
-        return itemMapping17;
+        return this.itemMapping17;
     }
 
     public Mapping getBlockMapping17() {
-        return blockMapping17;
+        return this.blockMapping17;
     }
 
     public Mapping getBlockMapping19() {
-        return blockMapping19;
+        return this.blockMapping19;
     }
 
     public Mapping getLangMapping() {
-        return langMapping;
+        return this.langMapping;
     }
 
     public Mapping getLangMapping14() {
-        return langMapping14;
-    };
+        return this.langMapping14;
+    }
 
     protected abstract static class Mapping {
         protected final Map<String, String> mapping = new HashMap<>();
 
         public Mapping() {
-            load();
+            this.load();
         }
 
         protected abstract void load();
@@ -334,116 +334,116 @@ public class NameConverter extends RPConverter {
          * @return remapped or in if not present
          */
         public String remap(String in) {
-            return mapping.getOrDefault(in, in);
+            return this.mapping.getOrDefault(in, in);
         }
     }
 
     protected class BlockMapping13 extends Mapping {
         @Override
         protected void load() {
-            JsonObject blocks = Util.readJsonResource(packConverter.getGson(), "/backwards/blocks.json")
+            JsonObject blocks = Util.readJsonResource(NameConverter.this.packConverter.getGson(), "/backwards/blocks.json")
                     .getAsJsonObject("1_13");
             if (blocks != null)
                 for (Map.Entry<String, JsonElement> entry : blocks.entrySet())
-                    this.mapping.put(entry.getKey(), entry.getValue().getAsString());
+                    mapping.put(entry.getKey(), entry.getValue().getAsString());
         }
     }
 
     protected class BlockMapping14 extends Mapping {
         @Override
         protected void load() {
-            JsonObject blocks = Util.readJsonResource(packConverter.getGson(), "/backwards/blocks.json")
+            JsonObject blocks = Util.readJsonResource(NameConverter.this.packConverter.getGson(), "/backwards/blocks.json")
                     .getAsJsonObject("1_14");
             if (blocks != null)
                 for (Map.Entry<String, JsonElement> entry : blocks.entrySet())
-                    this.mapping.put(entry.getKey(), entry.getValue().getAsString());
+                    mapping.put(entry.getKey(), entry.getValue().getAsString());
         }
     }
 
     protected class BlockMapping17 extends Mapping {
         @Override
         protected void load() {
-            JsonObject blocks = Util.readJsonResource(packConverter.getGson(), "/backwards/blocks.json")
+            JsonObject blocks = Util.readJsonResource(NameConverter.this.packConverter.getGson(), "/backwards/blocks.json")
                     .getAsJsonObject("1_17");
             if (blocks != null)
                 for (Map.Entry<String, JsonElement> entry : blocks.entrySet())
-                    this.mapping.put(entry.getKey(), entry.getValue().getAsString());
+                    mapping.put(entry.getKey(), entry.getValue().getAsString());
         }
     }
 
     protected class BlockMapping19 extends Mapping {
         @Override
         protected void load() {
-            JsonObject blocks = Util.readJsonResource(packConverter.getGson(), "/backwards/blocks.json")
+            JsonObject blocks = Util.readJsonResource(NameConverter.this.packConverter.getGson(), "/backwards/blocks.json")
                     .getAsJsonObject("1_19");
             if (blocks != null)
                 for (Map.Entry<String, JsonElement> entry : blocks.entrySet())
-                    this.mapping.put(entry.getKey(), entry.getValue().getAsString());
+                    mapping.put(entry.getKey(), entry.getValue().getAsString());
         }
     }
 
     protected class LangMapping extends Mapping {
         @Override
         protected void load() {
-            JsonObject entities = Util.readJsonResource(packConverter.getGson(), "/backwards/lang.json")
+            JsonObject entities = Util.readJsonResource(NameConverter.this.packConverter.getGson(), "/backwards/lang.json")
                     .getAsJsonObject("1_13");
             if (entities != null)
                 for (Map.Entry<String, JsonElement> entry : entities.entrySet())
-                    this.mapping.put(entry.getKey(), entry.getValue().getAsString());
+                    mapping.put(entry.getKey(), entry.getValue().getAsString());
         }
     }
 
     protected class LangMapping14 extends Mapping {
         @Override
         protected void load() {
-            JsonObject entities = Util.readJsonResource(packConverter.getGson(), "/backwards/lang.json")
+            JsonObject entities = Util.readJsonResource(NameConverter.this.packConverter.getGson(), "/backwards/lang.json")
                     .getAsJsonObject("1_14");
             if (entities != null)
                 for (Map.Entry<String, JsonElement> entry : entities.entrySet())
-                    this.mapping.put(entry.getKey(), entry.getValue().getAsString());
+                    mapping.put(entry.getKey(), entry.getValue().getAsString());
         }
     }
 
     protected class EntityMapping extends Mapping {
         @Override
         protected void load() {
-            JsonObject entities = Util.readJsonResource(packConverter.getGson(), "/backwards/entities.json");
+            JsonObject entities = Util.readJsonResource(NameConverter.this.packConverter.getGson(), "/backwards/entities.json");
             if (entities != null)
                 for (Map.Entry<String, JsonElement> entry : entities.entrySet())
-                    this.mapping.put(entry.getKey(), entry.getValue().getAsString());
+                    mapping.put(entry.getKey(), entry.getValue().getAsString());
         }
     }
 
     protected class ItemMapping13 extends Mapping {
         @Override
         protected void load() {
-            JsonObject items = Util.readJsonResource(packConverter.getGson(), "/backwards/items.json")
+            JsonObject items = Util.readJsonResource(NameConverter.this.packConverter.getGson(), "/backwards/items.json")
                     .getAsJsonObject("1_13");
             if (items != null)
                 for (Map.Entry<String, JsonElement> entry : items.entrySet())
-                    this.mapping.put(entry.getKey(), entry.getValue().getAsString());
+                    mapping.put(entry.getKey(), entry.getValue().getAsString());
         }
     }
 
     protected class ItemMapping14 extends Mapping {
         @Override
         protected void load() {
-            JsonObject items = Util.readJsonResource(packConverter.getGson(), "/backwards/items.json")
+            JsonObject items = Util.readJsonResource(NameConverter.this.packConverter.getGson(), "/backwards/items.json")
                     .getAsJsonObject("1_14");
             if (items != null)
                 for (Map.Entry<String, JsonElement> entry : items.entrySet())
-                    this.mapping.put(entry.getKey(), entry.getValue().getAsString());
+                    mapping.put(entry.getKey(), entry.getValue().getAsString());
         }
     }
 
     protected class ItemMapping17 extends Mapping {
         @Override
         protected void load() {
-            JsonObject items = Util.readJsonResource(packConverter.getGson(), "/backwards/items.json")
+            JsonObject items = Util.readJsonResource(NameConverter.this.packConverter.getGson(), "/backwards/items.json")
                     .getAsJsonObject("1_17");
             if (items != null)
                 for (Map.Entry<String, JsonElement> entry : items.entrySet())
-                    this.mapping.put(entry.getKey(), entry.getValue().getAsString());
+                    mapping.put(entry.getKey(), entry.getValue().getAsString());
         }
     }
 }

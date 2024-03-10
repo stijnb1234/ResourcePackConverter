@@ -26,20 +26,21 @@ public class DeleteFileConverter extends RPConverter {
 
     @Override
     public void convert() throws IOException {
-        models = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "models");
-        textures = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "textures");
+      this.models = this.pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "models");
+      this.textures = this.pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "textures");
 
-        for (int i = from; i > to; i--) {
-            deleteBlocks(i);
-            deleteItems(i);
-            deleteEntities(i);
+        for (int i = this.from; i > this.to; i--) {
+          this.deleteBlocks(i);
+          this.deleteItems(i);
+          this.deleteEntities(i);
         }
 
-        findFiles(models);
-        findFiles(textures);
+      this.findFiles(this.models);
+      this.findFiles(this.textures);
 
-        if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.19.3") && to < Util.getVersionProtocol(packConverter.getGson(), "1.19.3")) {
-            Path atlases = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "atlases");
+        if (this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.19.3") && this.to < Util.getVersionProtocol(
+            this.packConverter.getGson(), "1.19.3")) {
+            Path atlases = this.pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "atlases");
             if (atlases.toFile().exists())
                 Util.deleteDirectoryAndContents(atlases);
         }
@@ -51,7 +52,7 @@ public class DeleteFileConverter extends RPConverter {
 	    File[] fList = directory.listFiles();
 	    for (File file : fList)
 		if (file.isDirectory())
-		    findFiles(Paths.get(file.getPath()));
+      this.findFiles(Paths.get(file.getPath()));
 	    fList = directory.listFiles();
 	    if (fList.length == 0)
 		Files.deleteIfExists(directory.toPath());
@@ -59,17 +60,17 @@ public class DeleteFileConverter extends RPConverter {
     }
 
     public void deleteBlocks(int version) throws IOException {
-        String protocol = Util.getVersionFromProtocol(packConverter.getGson(), version);
-        JsonObject blocks = Util.readJsonResource(packConverter.getGson(), "/backwards/delete/blocks.json");
+        String protocol = Util.getVersionFromProtocol(this.packConverter.getGson(), version);
+        JsonObject blocks = Util.readJsonResource(this.packConverter.getGson(), "/backwards/delete/blocks.json");
 
         if (blocks.has(protocol)) {
             Path blockMPath, blockTPath;
-            if (version < Util.getVersionProtocol(packConverter.getGson(), "1.13")) {
-                blockMPath = models.resolve("block");
-                blockTPath = textures.resolve("blocks");
+            if (version < Util.getVersionProtocol(this.packConverter.getGson(), "1.13")) {
+                blockMPath = this.models.resolve("block");
+                blockTPath = this.textures.resolve("blocks");
             } else {
-                blockMPath = models.resolve("block");
-                blockTPath = textures.resolve("block");
+                blockMPath = this.models.resolve("block");
+                blockTPath = this.textures.resolve("block");
             }
 
             JsonArray versionBlock = blocks.get(protocol).getAsJsonArray();
@@ -83,17 +84,17 @@ public class DeleteFileConverter extends RPConverter {
     }
 
     public void deleteItems(int version) throws IOException {
-        String protocol = Util.getVersionFromProtocol(packConverter.getGson(), version);
-        JsonObject items = Util.readJsonResource(packConverter.getGson(), "/backwards/delete/items.json");
+        String protocol = Util.getVersionFromProtocol(this.packConverter.getGson(), version);
+        JsonObject items = Util.readJsonResource(this.packConverter.getGson(), "/backwards/delete/items.json");
 
         if (items.has(protocol)) {
             Path itemMPath, itemTPath;
-            if (version < Util.getVersionProtocol(packConverter.getGson(), "1.13")) {
-                itemMPath = models.resolve("item");
-                itemTPath = textures.resolve("items");
+            if (version < Util.getVersionProtocol(this.packConverter.getGson(), "1.13")) {
+                itemMPath = this.models.resolve("item");
+                itemTPath = this.textures.resolve("items");
             } else {
-                itemMPath = models.resolve("item");
-                itemTPath = textures.resolve("item");
+                itemMPath = this.models.resolve("item");
+                itemTPath = this.textures.resolve("item");
             }
 
             JsonArray versionItem = items.get(protocol).getAsJsonArray();
@@ -107,10 +108,10 @@ public class DeleteFileConverter extends RPConverter {
     }
 
     public void deleteEntities(int version) throws IOException {
-        String protocol = Util.getVersionFromProtocol(packConverter.getGson(), version);
-        JsonObject entities = Util.readJsonResource(packConverter.getGson(), "/backwards/delete/entities.json");
+        String protocol = Util.getVersionFromProtocol(this.packConverter.getGson(), version);
+        JsonObject entities = Util.readJsonResource(this.packConverter.getGson(), "/backwards/delete/entities.json");
         if (entities.has(protocol)) {
-            Path entityTPath = textures.resolve("entity");
+            Path entityTPath = this.textures.resolve("entity");
             JsonArray versionEntity = entities.get(protocol).getAsJsonArray();
             for (JsonElement item : versionEntity) {
                 String pathName = item.getAsString();

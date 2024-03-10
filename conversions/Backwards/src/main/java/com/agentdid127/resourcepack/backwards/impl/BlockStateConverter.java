@@ -12,13 +12,15 @@ import com.google.gson.JsonObject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
 
 public class BlockStateConverter extends RPConverter {
-    private int from, to;
+    private final int from;
+  private final int to;
     private boolean anyChanges;
 
     public BlockStateConverter(PackConverter packConverter, int from, int to) {
@@ -34,7 +36,7 @@ public class BlockStateConverter extends RPConverter {
      */
     @Override
     public void convert() throws IOException {
-        Path states = pack.getWorkingPath()
+        Path states = this.pack.getWorkingPath()
                 .resolve("assets" + File.separator + "minecraft" + File.separator + "blockstates");
         if (!states.toFile().exists())
             return;
@@ -42,15 +44,15 @@ public class BlockStateConverter extends RPConverter {
                 .filter(file -> file.toString().endsWith(".json"))
                 .forEach(file -> {
                     try {
-                        JsonObject json = Util.readJson(packConverter.getGson(), file);
-                        anyChanges = false;
+                        JsonObject json = Util.readJson(this.packConverter.getGson(), file);
+                      this.anyChanges = false;
 
                         // process multipart
                         JsonArray multipartArray = json.getAsJsonArray("multipart");
 
 
                         if (multipartArray != null) {
-                            if (to < Util.getVersionProtocol(packConverter.getGson(), "1.9")) {
+                            if (this.to < Util.getVersionProtocol(this.packConverter.getGson(), "1.9")) {
                                 // TODO: Convert Multipart to variants
                                 Files.delete(file);
                                 return;
@@ -59,7 +61,7 @@ public class BlockStateConverter extends RPConverter {
                                     JsonObject multipartObject = multipartArray.get(i)
                                         .getAsJsonObject();
                                     for (Map.Entry<String, JsonElement> entry : multipartObject.entrySet())
-                                        updateModelPath(entry);
+                                      this.updateModelPath(entry);
                                 }
                             }
                         }
@@ -68,8 +70,8 @@ public class BlockStateConverter extends RPConverter {
                         JsonObject variantsObject = json.getAsJsonObject("variants");
                         if (variantsObject != null) {
                             // change "normal" key to ""
-                            if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.13")
-                                    && to < Util.getVersionProtocol(packConverter.getGson(), "1.13")) {
+                            if (this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.13")
+                                    && this.to < Util.getVersionProtocol(this.packConverter.getGson(), "1.13")) {
 
                                 if (!variantsObject.has("")) {
                                     // TODO: find a better way to deal with this.
@@ -80,17 +82,18 @@ public class BlockStateConverter extends RPConverter {
                                 if (normal instanceof JsonObject || normal instanceof JsonArray) {
                                     variantsObject.add("normal", normal);
                                     variantsObject.remove("");
-                                    anyChanges = true;
+                                  this.anyChanges = true;
                                 }
                             }
 
                             // update model paths to prepend block
                             for (Map.Entry<String, JsonElement> entry : variantsObject.entrySet())
-                                updateModelPath(entry);
+                              this.updateModelPath(entry);
                         }
-                        if (anyChanges) {
-                            Files.write(file, Collections.singleton(packConverter.getGson().toJson(json)),
-                                    Charset.forName("UTF-8"));
+                        if (this.anyChanges) {
+                            Files.write(file, Collections.singleton(
+                                    this.packConverter.getGson().toJson(json)),
+                                StandardCharsets.UTF_8);
                             if (PackConverter.DEBUG)
                                 Logger.log("      Converted " + file.getFileName());
                         }
@@ -106,7 +109,7 @@ public class BlockStateConverter extends RPConverter {
      * @param entry
      */
     private void updateModelPath(Map.Entry<String, JsonElement> entry) {
-        NameConverter nameConverter = packConverter.getConverter(NameConverter.class);
+        NameConverter nameConverter = this.packConverter.getConverter(NameConverter.class);
         if (entry.getValue() instanceof JsonObject) {
             JsonObject value = (JsonObject) entry.getValue();
             if (value.has("model")) {
@@ -115,38 +118,38 @@ public class BlockStateConverter extends RPConverter {
                 String prefix = value.get("model").getAsString().substring(0,
                         value.get("model").getAsString().length() - val.length());
 
-                if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.19.3")
-                        && to < Util.getVersionProtocol(packConverter.getGson(), "1.19.3")) {
+                if (this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.19.3")
+                        && this.to < Util.getVersionProtocol(this.packConverter.getGson(), "1.19.3")) {
                     prefix = prefix.replaceAll("minecraft:", "");
-                    anyChanges = true;
+                  this.anyChanges = true;
                 }
 
-                if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.19")
-                        && to < Util.getVersionProtocol(packConverter.getGson(), "1.19")) {
+                if (this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.19")
+                        && this.to < Util.getVersionProtocol(this.packConverter.getGson(), "1.19")) {
                     val = nameConverter.getBlockMapping19().remap(val);
-                    anyChanges = true;
+                  this.anyChanges = true;
                 }
 
-                if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.17")
-                        && to < Util.getVersionProtocol(packConverter.getGson(), "1.17")) {
+                if (this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.17")
+                        && this.to < Util.getVersionProtocol(this.packConverter.getGson(), "1.17")) {
                     val = nameConverter.getBlockMapping17().remap(val);
-                    anyChanges = true;
+                  this.anyChanges = true;
                 }
 
-                if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.14")
-                        && to < Util.getVersionProtocol(packConverter.getGson(), "1.14")) {
+                if (this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.14")
+                        && this.to < Util.getVersionProtocol(this.packConverter.getGson(), "1.14")) {
                     val = nameConverter.getNewBlockMapping().remap(val);
-                    anyChanges = true;
+                  this.anyChanges = true;
                 }
 
-                if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.13")
-                        && to < Util.getVersionProtocol(packConverter.getGson(), "1.13")) {
+                if (this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.13")
+                        && this.to < Util.getVersionProtocol(this.packConverter.getGson(), "1.13")) {
                     val = nameConverter.getBlockMapping().remap(val);
                     prefix = "";
-                    anyChanges = true;
+                  this.anyChanges = true;
                 }
 
-                if (anyChanges)
+                if (this.anyChanges)
                     value.addProperty("model", prefix + val);
             }
         } else if (entry.getValue() instanceof JsonArray) { // some states have arrays
@@ -159,38 +162,38 @@ public class BlockStateConverter extends RPConverter {
                         String prefix = value.get("model").getAsString().substring(0,
                                 value.get("model").getAsString().length() - val.length());
 
-                        if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.19.3")
-                                && to < Util.getVersionProtocol(packConverter.getGson(), "1.19.3")) {
+                        if (this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.19.3")
+                                && this.to < Util.getVersionProtocol(this.packConverter.getGson(), "1.19.3")) {
                             prefix = prefix.replaceAll("minecraft:", "");
-                            anyChanges = true;
+                          this.anyChanges = true;
                         }
 
-                        if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.19")
-                                && to < Util.getVersionProtocol(packConverter.getGson(), "1.19")) {
+                        if (this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.19")
+                                && this.to < Util.getVersionProtocol(this.packConverter.getGson(), "1.19")) {
                             val = nameConverter.getBlockMapping19().remap(val);
-                            anyChanges = true;
+                          this.anyChanges = true;
                         }
 
-                        if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.17")
-                                && to < Util.getVersionProtocol(packConverter.getGson(), "1.17")) {
+                        if (this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.17")
+                                && this.to < Util.getVersionProtocol(this.packConverter.getGson(), "1.17")) {
                             val = nameConverter.getBlockMapping17().remap(val);
-                            anyChanges = true;
+                          this.anyChanges = true;
                         }
 
-                        if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.14")
-                                && to < Util.getVersionProtocol(packConverter.getGson(), "1.14")) {
+                        if (this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.14")
+                                && this.to < Util.getVersionProtocol(this.packConverter.getGson(), "1.14")) {
                             val = nameConverter.getNewBlockMapping().remap(val);
-                            anyChanges = true;
+                          this.anyChanges = true;
                         }
 
-                        if (from >= Util.getVersionProtocol(packConverter.getGson(), "1.13")
-                                && to < Util.getVersionProtocol(packConverter.getGson(), "1.13")) {
+                        if (this.from >= Util.getVersionProtocol(this.packConverter.getGson(), "1.13")
+                                && this.to < Util.getVersionProtocol(this.packConverter.getGson(), "1.13")) {
                             val = nameConverter.getBlockMapping().remap(val);
                             prefix = "";
-                            anyChanges = true;
+                          this.anyChanges = true;
                         }
 
-                        if (anyChanges)
+                        if (this.anyChanges)
                             value.addProperty("model", prefix + val);
                     }
                 }

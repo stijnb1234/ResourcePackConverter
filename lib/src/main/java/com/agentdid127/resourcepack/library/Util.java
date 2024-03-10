@@ -36,7 +36,7 @@ public final class Util {
                     Files.delete(dest.resolve(src.relativize(path)));
                 Files.copy(path, dest.resolve(src.relativize(path)));
             } catch (Throwable e) {
-                throw Util.propagate(e);
+                throw propagate(e);
             }
         });
     }
@@ -111,7 +111,7 @@ public final class Util {
      * @return Protocol Integer Number
      */
     public static int getVersionProtocol(Gson gson, String version) {
-        JsonObject protocols = Util.readJsonResource(gson, "/protocol.json");
+        JsonObject protocols = readJsonResource(gson, "/protocol.json");
         return protocols == null ? 0 : Integer.parseInt(protocols.get(version).getAsString());
     }
 
@@ -124,7 +124,7 @@ public final class Util {
      */
     public static String getVersionFromProtocol(Gson gson, int protocol) {
         AtomicReference<String> version = new AtomicReference<String>("ok boomer");
-        JsonObject protocols = Util.readJsonResource(gson, "/protocol.json");
+        JsonObject protocols = readJsonResource(gson, "/protocol.json");
         if (protocols == null)
             return null;
         List<String> keys = protocols.entrySet().stream().map(i -> i.getKey())
@@ -143,7 +143,7 @@ public final class Util {
      * @return String list of all minecraft versions
      */
     public static String[] getSupportedVersions(Gson gson) {
-        JsonObject protocols = Util.readJsonResource(gson, "/protocol.json");
+        JsonObject protocols = readJsonResource(gson, "/protocol.json");
         if (protocols == null)
             return null;
         return protocols.entrySet()
@@ -153,7 +153,7 @@ public final class Util {
     }
 
     public static JsonObject readJson(Gson gson, Path path) throws IOException {
-        return Util.readJson(gson, path, JsonObject.class);
+        return readJson(gson, path, JsonObject.class);
     }
 
     public static boolean isJson(Gson gson, String Json) {
@@ -176,8 +176,8 @@ public final class Util {
     }
 
     public static <T> T readJson(Gson gson, Path path, Class<T> clazz) throws IOException {
-        String json = readFromFile(path);
-        if (!isJson(gson, json))
+        String json = Util.readFromFile(path);
+        if (!Util.isJson(gson, json))
             return null;
         JsonReader reader = new JsonReader(new StringReader(json));
         reader.setLenient(true);
@@ -220,7 +220,7 @@ public final class Util {
                 File file3 = new File(dir1.getAbsolutePath() + File.separator + file.getName());
                 file3.mkdirs();
                 Logger.log("Created" + file3.getName());
-                mergeDirectories(file3, file);
+              Util.mergeDirectories(file3, file);
             } else {
                 Logger.log(dir1.getAbsolutePath() + File.separator + file.getName());
                 file.renameTo(new File(dir1.getAbsolutePath() + File.separator + file.getName()));

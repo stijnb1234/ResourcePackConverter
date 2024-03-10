@@ -16,7 +16,7 @@ public class EnchantPathConverter extends RPConverter {
 
     @Override
     public void convert() throws IOException {
-        Path misc = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "textures" + File.separator + "misc");
+        Path misc = this.pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator + "textures" + File.separator + "misc");
 
         if (misc.resolve("enchanted_glint_item.png").toFile().exists())
             Files.move(misc.resolve("enchanted_glint_item.png"), misc.resolve("enchanted_item_glint.png"));

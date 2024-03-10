@@ -22,7 +22,8 @@ public class ZipPack extends Pack {
 
     @Override
     public String getFileName() {
-        return path.getFileName().toString().substring(0, path.getFileName().toString().length() - 4);
+        return this.path.getFileName().toString().substring(0,
+            this.path.getFileName().toString().length() - 4);
     }
 
     public static class Handler extends Pack.Handler {
@@ -31,7 +32,8 @@ public class ZipPack extends Pack {
         }
 
         public Path getConvertedZipPath() {
-            return pack.getWorkingPath().getParent().resolve(pack.getWorkingPath().getFileName() + ".zip");
+            return this.pack.getWorkingPath().getParent().resolve(
+                this.pack.getWorkingPath().getFileName() + ".zip");
         }
 
         /**
@@ -42,27 +44,27 @@ public class ZipPack extends Pack {
          */
         @Override
         public void setup() throws IOException {
-            if (pack.getWorkingPath().toFile().exists()) {
+            if (this.pack.getWorkingPath().toFile().exists()) {
                 Logger.log("  Deleting existing conversion");
-                Util.deleteDirectoryAndContents(pack.getWorkingPath());
+                Util.deleteDirectoryAndContents(this.pack.getWorkingPath());
             }
 
-            Path convertedZipPath = getConvertedZipPath();
+            Path convertedZipPath = this.getConvertedZipPath();
             if (convertedZipPath.toFile().exists()) {
                 Logger.log("  Deleting existing conversion zip");
                 convertedZipPath.toFile().delete();
             }
 
-            pack.getWorkingPath().toFile().mkdir();
+          this.pack.getWorkingPath().toFile().mkdir();
 
             try {
-                ZipFile zipFile = new ZipFile(pack.getOriginalPath().toFile());
-                zipFile.extractAll(pack.getWorkingPath().toString());
+                ZipFile zipFile = new ZipFile(this.pack.getOriginalPath().toFile());
+                zipFile.extractAll(this.pack.getWorkingPath().toString());
             } catch (ZipException e) {
                 Util.propagate(e);
             }
 
-            bomRemover(pack.getWorkingPath());
+          Handler.bomRemover(this.pack.getWorkingPath());
             return;
         }
 
@@ -75,16 +77,16 @@ public class ZipPack extends Pack {
         public void finish() throws IOException {
             try {
                 Logger.log("  Zipping working directory");
-                ZipFile zipFile = new ZipFile(getConvertedZipPath().toFile());
+                ZipFile zipFile = new ZipFile(this.getConvertedZipPath().toFile());
                 ZipParameters parameters = new ZipParameters();
                 parameters.setIncludeRootFolder(false);
-                zipFile.createSplitZipFileFromFolder(pack.getWorkingPath().toFile(), parameters, false, 65536);
+                zipFile.createSplitZipFileFromFolder(this.pack.getWorkingPath().toFile(), parameters, false, 65536);
             } catch (ZipException e) {
                 Util.propagate(e);
             }
 
             Logger.log("  Deleting working directory");
-            Util.deleteDirectoryAndContents(pack.getWorkingPath());
+            Util.deleteDirectoryAndContents(this.pack.getWorkingPath());
         }
 
         @Override

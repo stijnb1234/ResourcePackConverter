@@ -19,16 +19,16 @@ public class MapIconConverter extends RPConverter {
 
     public MapIconConverter(PackConverter packConverter) {
         super(packConverter, "MapIconConverter", 1);
-        mapping.put(pack(0, 0), pack(0, 0));
-        mapping.put(pack(8, 0), pack(8, 0));
-        mapping.put(pack(16, 0), pack(16, 0));
-        mapping.put(pack(24, 0), pack(24, 0));
-        mapping.put(pack(0, 8), pack(32, 0));
-        mapping.put(pack(8, 8), pack(40, 0));
-        mapping.put(pack(16, 8), pack(48, 0));
-        mapping.put(pack(24, 8), pack(56, 0));
-        mapping.put(pack(0, 16), pack(64, 0));
-        mapping.put(pack(8, 16), pack(72, 0));
+        this.mapping.put(this.pack(0, 0), this.pack(0, 0));
+        this.mapping.put(this.pack(8, 0), this.pack(8, 0));
+        this.mapping.put(this.pack(16, 0), this.pack(16, 0));
+        this.mapping.put(this.pack(24, 0), this.pack(24, 0));
+        this.mapping.put(this.pack(0, 8), this.pack(32, 0));
+        this.mapping.put(this.pack(8, 8), this.pack(40, 0));
+        this.mapping.put(this.pack(16, 8), this.pack(48, 0));
+        this.mapping.put(this.pack(24, 8), this.pack(56, 0));
+        this.mapping.put(this.pack(0, 16), this.pack(64, 0));
+        this.mapping.put(this.pack(8, 16), this.pack(72, 0));
     }
 
     /**
@@ -38,7 +38,7 @@ public class MapIconConverter extends RPConverter {
      */
     @Override
     public void convert() throws IOException {
-        Path imagePath = pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator
+        Path imagePath = this.pack.getWorkingPath().resolve("assets" + File.separator + "minecraft" + File.separator
                 + "textures" + File.separator + "map" + File.separator + "forwards/map_icons.png");
         if (!imagePath.toFile().exists())
             return;
@@ -53,7 +53,7 @@ public class MapIconConverter extends RPConverter {
 
         for (int x = 0; x <= 32 - 8; x += 8) {
             for (int y = 0; y <= 32 - 8; y += 8) {
-                Long mapped = mapping.get(pack(x, y));
+                Long mapped = this.mapping.get(this.pack(x, y));
                 if (mapped == null)
                     continue;
 

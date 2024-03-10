@@ -20,25 +20,25 @@ public class ParticleConverter extends RPConverter {
     @Override
     public void convert() throws IOException {
         // The directory to convert
-        particles = pack.getWorkingPath()
+      this.particles = this.pack.getWorkingPath()
                 .resolve("assets" + File.separator + "minecraft" + File.separator + "particles");
 
         // Check if the two merged files exist.
         boolean barrier = false;
         boolean light = false;
 
-        if (particles.resolve("barrier.json").toFile().exists())
+        if (this.particles.resolve("barrier.json").toFile().exists())
             barrier = true;
-        else if (particles.resolve("light.json").toFile().exists())
+        else if (this.particles.resolve("light.json").toFile().exists())
             light = true;
 
         // Move around files depending on what exists or what doesn't exist.
         if (barrier) {
-            Files.move(particles.resolve("barrier.json"), particles.resolve("block_marker.json"));
+            Files.move(this.particles.resolve("barrier.json"), this.particles.resolve("block_marker.json"));
             if (light)
-                Files.delete(particles.resolve("light.json"));
+                Files.delete(this.particles.resolve("light.json"));
         } else if (light) {
-            Files.move(particles.resolve("light.json"), particles.resolve("block_marker.json"));
+            Files.move(this.particles.resolve("light.json"), this.particles.resolve("block_marker.json"));
         }
     }
 }
