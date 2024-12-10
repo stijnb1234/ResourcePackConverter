@@ -334,5 +334,9 @@
   "1.21.3": {
     "protocol_version": "768",
     "pack_format": "42"
+  },
+  "1.21.4": {
+    "protocol_version": "769",
+    "pack_format": "46"
   }
 }
